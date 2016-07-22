@@ -1,0 +1,58 @@
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csprojResolveAssemblyReference.cache
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.baml
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.g.cs
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\App.g.cs
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.cache
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.g.resources
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csproj.GenerateResource.Cache
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.baml
+C:\Users\Davide\Documents\My_Documents\Poli\Informatica\Programmazione di sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.g.cs
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.pdb
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csprojResolveAssemblyReference.cache
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.baml
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.baml
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.g.cs
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.g.cs
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\App.g.cs
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.cache
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.g.resources
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csproj.GenerateResource.Cache
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\davit\Documents\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.lref
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\bin\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csprojResolveAssemblyReference.cache
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.baml
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.g.cs
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\Signin.g.cs
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\App.g.cs
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.cache
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1_MarkupCompile.lref
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\MainWindow.baml
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.g.resources
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\WpfApplication1\WpfApplication1\obj\Debug\WpfApplication1.csproj.GenerateResource.Cache
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\Esplorazione server\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\Esplorazione server\WpfApplication1\obj\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\Poli\Prorammazione sistema\Prove c#\FileSystem\Esplorazione server\WpfApplication1\obj\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\WpfApplication1\obj\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\WpfApplication1\obj\Debug\WpfApplication1.pdb
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\client\bin\Debug\WpfApplication1.exe.config
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\client\obj\Debug\WpfApplication1.exe
+C:\Users\Davide\Documents\Poli\backup-manager\Esplorazione server\client\obj\Debug\WpfApplication1.pdb
