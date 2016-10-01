@@ -1,0 +1,11 @@
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\bin\Debug\ClientDiProva.exe.config
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.Form1.resources
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.Properties.Resources.resources
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.csproj.GenerateResource.Cache
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\bin\Debug\ClientDiProva.exe
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\bin\Debug\ClientDiProva.pdb
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.exe
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.pdb
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\obj\Debug\ClientDiProva.csprojResolveAssemblyReference.cache
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\clientDiProva\ClientDiProva\ClientDiProva\bin\Debug\Newtonsoft.Json.xml
