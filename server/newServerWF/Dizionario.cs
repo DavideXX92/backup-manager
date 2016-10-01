@@ -20,15 +20,21 @@ namespace newServerWF
             this.handleClient = handleClient;
             invokeFunc = invokeFunction;
             dict = new Dictionary<string, Delegate>();
-            dict["000"] = new Action(handleClient.stop);
+            //dict["000"] = new Action(handleClient.closeConnectionWithTheClient);
+            dict["000"] = new Func<GenericRequest, GenericRequest>(handleClient.closeConnectionWithTheClient);
             dict["001"] = new Func<File, WrapFile>(handleClient.handleRequestOfFile);
-            dict["002"] = new Func<File, WrapFile>(handleClient.prepareReceiptOfFile);
+            dict["002"] = new Func<File, WrapFile>(handleClient.initializeReceiptOfFile);
             dict["003"] = new Func<Login, Login>(handleClient.handleLogin);
-            dict["004"] = new Func<Register, Register>(handleClient.handleRegister);
-            dict["006"] = new Func<List<File>, List<File>>(handleClient.handleSynchronizeRequest);
-            dict["008"] = new Func<GenericReq, GenericReq>(handleClient.completeSynchronization);
+            dict["004"] = new Func<Register, Register>(handleClient.handleRegistration);
+            //dict["006"] = new Func<List<File>, List<File>>(handleClient.handleSynchronizeRequest);
+            dict["007"] = new Func<StoredVersions, StoredVersions>(handleClient.sendStoredVersions);
+            dict["008"] = new Func<CloseVersion, CloseVersion>(handleClient.closeVersion);
+            //dict["008"] = new Func<GenericReq, GenericReq>(handleClient.completeSynchronization);
             dict["010"] = new Func<WrapFile, WrapFile>(handleClient.fileReceived);
+            dict["011"] = new Func<CreateVersion, CreateVersion>(handleClient.createNewVersion);
+            dict["012"] = new Func<RestoreVersion, RestoreVersion>(handleClient.restoreVersion);
             //dict["xxx"] = new Action<Object>(handleClient.saveFile);
+            dict["013"] = new Func<CheckFile, CheckFile>(handleClient.checkFile);
         }
 
         public Object invokeFunction(string str, Object obj)
