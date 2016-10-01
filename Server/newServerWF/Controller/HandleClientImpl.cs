@@ -257,7 +257,7 @@ namespace newServerWF
                 case "deleteFile":
                     try
                     {
-                        fsService.deleteFile(clientUser.username, 1, request.file);
+                        fsService.deleteFile(clientUser.username, 1, request.path);
                         request.message = "File eliminato correttamente";
                     }
                     catch (Exception e)

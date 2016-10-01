@@ -13,7 +13,7 @@ namespace newServerWF
         void addFile(string username, int version, File file);
         void renameFile(string username, int version, string oldPath, string newPath);
         void updateFile(string username, int version, File file);
-        void deleteFile(string username, int version, File file);
+        void deleteFile(string username, int version, string path);
         void setFileAsReceived(string username, string hash);
         List<string> getAllHashToBeingReceived(string username);
         

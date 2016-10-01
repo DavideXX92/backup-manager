@@ -339,8 +339,7 @@ namespace ClientDiProva
                     else
                     {
                         checkFile.operation = "deleteFile";
-                        checkFile.file = new File(path, monitorDir);
-                        //checkFile.path = fsService.getPathFromMonitorDir(path, monitorDir);
+                        checkFile.path = fsService.getPathFromMonitorDir(path, monitorDir);
                         buffer.list.Add(checkFile);
                     }
                     break;

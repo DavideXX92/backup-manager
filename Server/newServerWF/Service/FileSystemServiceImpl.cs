@@ -92,12 +92,12 @@ namespace newServerWF
                 throw e;
             }
         }
-        public void deleteFile(string username, int version, File file)
+        public void deleteFile(string username, int version, string path)
         {
             try
             {
                 int idUser = userService.getIdByUsername(username);
-                int idFile = fileDao.checkIfFileExists(idUser, version, file.path);
+                int idFile = fileDao.checkIfFileExists(idUser, version, path);
                 if (idFile == -1)
                     throw new Exception("Il file da eliminare non esiste");
                 else
