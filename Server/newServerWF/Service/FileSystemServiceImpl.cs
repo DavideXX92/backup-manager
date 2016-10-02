@@ -84,7 +84,7 @@ namespace newServerWF
                 if (idFile == -1)
                     throw new Exception("Il file da modificare non esiste");
                 else
-                    fileDao.updateFile(idUser, version, idFile, file.hash, file.size, file.lastWriteTime );
+                    fileDao.updateFile(idUser, version, idFile, file.hash, file.size, file.lastWriteTime);
             }
             catch (Exception e)
             {
@@ -101,8 +101,7 @@ namespace newServerWF
                 if (idFile == -1)
                     throw new Exception("Il file da eliminare non esiste");
                 else
-                    fileDao.deleteFile(idUser, version, idFile);
-                
+                    fileDao.deleteFile(idUser, version, idFile);        
             }
             catch (Exception e)
             {

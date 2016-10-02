@@ -34,7 +34,7 @@ namespace newServerWF
             try
             {
                 connection.Open();
-                Console.WriteLine("Connection open with the database");
+                //Console.WriteLine("Connection open with the database");
                 return connection;
             }
             catch (MySqlException ex)
@@ -63,7 +63,7 @@ namespace newServerWF
             try
             {
                 connection.Close();
-                Console.WriteLine("Connection closed with the database");
+                //Console.WriteLine("Connection closed with the database");
                 return true;
             }
             catch (MySqlException ex)

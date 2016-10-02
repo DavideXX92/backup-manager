@@ -12,6 +12,7 @@ namespace newServerWF
         int addVersion(int idUser);
         void closeVersion(int idUser, int idVersion);
         Version getVersionInfo(int idUser, int idVersion);
-        List<int> getAllIdOfVersionsOfaUser(int idUser);  
+        List<int> getAllIdOfVersionsOfaUser(int idUser);
+        int getCurrentVersionID(int idUser);
     }
 }

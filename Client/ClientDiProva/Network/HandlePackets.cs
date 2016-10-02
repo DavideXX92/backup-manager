@@ -211,7 +211,7 @@ namespace ClientDiProva
                 else
                     json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings(){ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore});
 
-                Console.WriteLine(json);
+                //Console.WriteLine(json);
                 objBuffer = ASCIIEncoding.ASCII.GetBytes(json);
 
                 int length = objBuffer.Length;
@@ -290,29 +290,6 @@ namespace ClientDiProva
                 //return null;
                 throw new Exception("Impossibile ricevere il file (l'object), problema di rete");        
         }
-
-        // Convert an Object to a byte array - Serialize
-        /*private byte[] ObjectToByteArray(Object obj)
-        {
-            if (obj == null)
-                return null;
-            BinaryFormatter bf = new BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, obj);
-            return ms.ToArray();
-        }*/
-
-        // Convert a byte array to an Object - Deserialize
-        /*private Object ByteArrayToObject(byte[] arrBytes)
-        {
-            MemoryStream memStream = new MemoryStream();
-            BinaryFormatter binForm = new BinaryFormatter();
-            memStream.Write(arrBytes, 0, arrBytes.Length);
-            memStream.Seek(0, SeekOrigin.Begin);
-            binForm.Binder = new MyBinder();
-            Object obj = (Object)binForm.Deserialize(memStream);
-            return obj;
-        }*/
 
     }
 }

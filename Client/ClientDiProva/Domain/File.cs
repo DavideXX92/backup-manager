@@ -12,6 +12,7 @@ namespace ClientDiProva
     {
         public string name { get; set; }
         public string path { get; set; }
+        public string absolutePath {get; set;}
         public Dir parentDir { get; set; }
         public int size { get; set; }
         public string hash { get; set; }
@@ -30,6 +31,7 @@ namespace ClientDiProva
                 FileInfo fileinfo = new FileInfo(path);
                 this.name = fileinfo.Name;
                 this.path = getPathFromMonitorDir(path, monitorDirPath);
+                this.absolutePath = path;
                 this.parentDir = null;
                 this.size = (int)fileinfo.Length;
                 this.hash = getHash(path);
@@ -49,6 +51,7 @@ namespace ClientDiProva
                 FileInfo fileinfo = new FileInfo(filename);
                 this.name = fileinfo.Name;
                 this.path = parentDir.path + @"\" + this.name;
+                this.absolutePath = path;
                 this.parentDir = parentDir;
                 this.size = (int)fileinfo.Length;
                 this.hash = getHash(filename);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClientDiProva
 {
-    class DirTreeImpl : DirTree
+    class DirTreeServiceImpl : DirTreeService
     {
         public Dir makeDirTree(Dir rootDir)
         {

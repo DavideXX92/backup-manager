@@ -60,31 +60,6 @@ namespace newServerWF
                 return request;
             }
         }
-        public Login handleLogin(Login loginRequest)
-        {
-            User user = loginRequest.user;
-            Console.WriteLine("L'utente " + user.username + " sta tentando di autenticarsi.");
-            MyConsole.write("User: " + user.username);
-            MyConsole.write("Pass: " + user.password);
-            UserService userService = new UserServiceImpl();
-            Login loginResponse = new Login(user);
-            if (userService.checkIfCredentialsAreCorrected(user.username, user.password))
-            {
-                clientUser = userService.getUser(user.username);
-                Console.WriteLine(user.username + ": autenticazione riuscita");
-                loginResponse.user = clientUser;
-                loginResponse.message = user.username + " autenticazione riuscita";
-                loginResponse.isLogged = true;
-                clientDir = serverDirRoot + user.username + @"\";
-                isLogged = true;
-            }
-            else
-            {
-                Console.WriteLine(user.username + ": impossibile autenticarsi");
-                loginResponse.error = user.username + ": impossibile autenticarsi";
-            }
-            return loginResponse;
-        }
         public Register handleRegistration(Register registerRequest)
         {
             User user = registerRequest.user;
@@ -111,6 +86,31 @@ namespace newServerWF
             }
             return registerResponse;
         }
+        public Login handleLogin(Login loginRequest)
+        {
+            User user = loginRequest.user;
+            Console.WriteLine("L'utente " + user.username + " sta tentando di autenticarsi.");
+            MyConsole.write("User: " + user.username);
+            MyConsole.write("Pass: " + user.password);
+            UserService userService = new UserServiceImpl();
+            Login loginResponse = new Login(user);
+            if (userService.checkIfCredentialsAreCorrected(user.username, user.password))
+            {
+                clientUser = userService.getUser(user.username);
+                Console.WriteLine(user.username + ": autenticazione riuscita");
+                loginResponse.user = clientUser;
+                loginResponse.message = user.username + " autenticazione riuscita";
+                loginResponse.isLogged = true;
+                clientDir = serverDirRoot + user.username + @"\";
+                isLogged = true;
+            }
+            else
+            {
+                Console.WriteLine(user.username + ": impossibile autenticarsi");
+                loginResponse.error = user.username + ": impossibile autenticarsi";
+            }
+            return loginResponse;
+        } 
         public CreateVersion createNewVersion(CreateVersion request)
         {
             VersionService versionService = new VersionServiceImpl();
@@ -129,6 +129,33 @@ namespace newServerWF
             }catch (Exception e)
             {
                 request.error = "La versione e' stata creata, ma la lista degli hash mancanti non e' stata ricevuta: " + e.Message;
+            }
+            return request;
+        }
+        public UpdateVersion updateVersion(UpdateVersion request)
+        {
+            VersionService versionService = new VersionServiceImpl();
+            FileSystemService fsService = new FileSystemServiceImpl();
+            try
+            {
+                int idVersion = versionService.getCurrentVersionID(clientUser.username);
+                versionService.updateVersion(clientUser.username, idVersion, request);
+                request.message = "versione aggiornata";
+            }
+            catch (Exception e)
+            {
+                request.error = "impossibile aggiornare la versione";
+                Console.WriteLine("impossibile aggiornare la versione");
+                return request;
+            }
+            try
+            {
+                request.elencoHash = fsService.getAllHashToBeingReceived(clientUser.username);
+                request.message = "Versione aggiornata e lista degli hash ricevuti";
+            }
+            catch (Exception e)
+            {
+                request.error = "La versione e' stata aggiornata, ma la lista degli hash mancanti non e' stata ricevuta: " + e.Message;
             }
             return request;
         }

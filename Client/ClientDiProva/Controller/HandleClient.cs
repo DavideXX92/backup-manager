@@ -8,12 +8,12 @@ namespace ClientDiProva
 {
     interface HandleClient
     {
-        void disconnect();
         void setMonitorDir(string pathDir);
         void registerRequest(string username, string password);
         void loginRequest(string username, string password);
-        List<Version> askStoredVersions();
+        void logoutRequest();
         Version createNewVersion();
+        void updateVersion(MyBuffer bufferOperation);
         void closeVersion(Version version);
         Version restoreVersion(int idVersion);
         void synchronize();

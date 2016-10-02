@@ -55,6 +55,59 @@ namespace newServerWF
             }  
             
         }
+        public void updateVersion(string username, int idVersion, UpdateVersion updateVersion)
+        {
+            FileSystemService fsService = new FileSystemServiceImpl();
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    foreach (Operation operation in updateVersion.list)
+                    {
+                        switch (operation.type)
+                        {
+                            case "addFile":
+                                fsService.addFile(username, idVersion, operation.file);
+                                Console.WriteLine("FILE: " + operation.file.path + " Added");
+                                break;
+                            case "updateFile":
+                                fsService.updateFile(username, idVersion, operation.file);
+                                Console.WriteLine("FILE: " + operation.file.path + " Updated");
+                                break;
+                            case "renameFile":
+                                fsService.renameFile(username, idVersion, operation.oldPath, operation.newPath);
+                                Console.WriteLine("FILE: " + operation.oldPath + " renamed to: " + operation.newPath);
+                                break;
+                            case "deleteFile":
+                                fsService.deleteFile(username, idVersion, operation.path);
+                                Console.WriteLine("FILE: " + operation.path + " Deleted");
+                                break;
+                            case "addDir":
+                                fsService.addDir(username, idVersion, operation.dir);
+                                Console.WriteLine("DIR: " + operation.dir.path + " Added");
+                                break;
+                            case "updateDir":
+                                fsService.updateDir(username, idVersion, operation.dir);
+                                Console.WriteLine("DIR: " + operation.dir.path + " Updated");
+                                break;
+                            case "renameDir":
+                                fsService.renameDir(username, idVersion, operation.oldPath, operation.newPath);
+                                Console.WriteLine("DIR: " + operation.oldPath + " renamed to: " + operation.newPath);
+                                break;
+                            case "deleteDir":
+                                fsService.deleteDir(username, idVersion, operation.path);
+                                Console.WriteLine("DIR: " + operation.path + " Deleted");
+                                break;
+                        }
+                    }
+                    scope.Complete();
+                }
+            }catch(Exception e)
+            {
+                Console.WriteLine("impossibile aggiornare la versione");
+                throw;
+            }
+        }
         public void closeVersion(string username, int idVersion)
         {
             UserDao userDao = new UserDaoImpl();
@@ -91,6 +144,21 @@ namespace newServerWF
                 throw;
             }   
             
+        }
+        public int getCurrentVersionID(string username)
+        {
+            UserDao userDao = new UserDaoImpl();
+            VersionDao versionDao = new VersionDaoImpl();
+            try
+            {
+                int idUser = userDao.getIdByUsername(username);
+                return versionDao.getCurrentVersionID(idUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("impossibile recuperare l'id della versione corrente");
+                throw;
+            }   
         }
         public List<File> getAllFileIntoAlist(Version version)
         {

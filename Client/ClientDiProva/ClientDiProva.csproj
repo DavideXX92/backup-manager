@@ -62,14 +62,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SharedClasses\Operation.cs" />
     <Compile Include="Service\FileSystemService.cs" />
     <Compile Include="Service\FileSystemServiceImpl.cs" />
-    <Compile Include="SharedClasses\MyBuffer.cs" />
+    <Compile Include="MyBuffer.cs" />
     <Compile Include="SharedClasses\CheckFile.cs" />
     <Compile Include="SharedClasses\CloseVersion.cs" />
     <Compile Include="Controller\HandleClient.cs" />
-    <Compile Include="Service\DirTree.cs" />
-    <Compile Include="Service\DirTreeImpl.cs" />
+    <Compile Include="Service\DirTreeService.cs" />
+    <Compile Include="Service\DirTreeServiceImpl.cs" />
     <Compile Include="Controller\HandleClientImpl.cs" />
     <Compile Include="SharedClasses\RestoreVersion.cs" />
     <Compile Include="Domain\Dir.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="SharedClasses\CreateVersion.cs" />
     <Compile Include="SharedClasses\StoredVersions.cs" />
     <Compile Include="Domain\Version.cs" />
+    <Compile Include="SharedClasses\UpdateVersion.cs" />
+    <Compile Include="Watcher.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

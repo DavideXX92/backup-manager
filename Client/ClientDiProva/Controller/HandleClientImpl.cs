@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ClientDiProva
 {
@@ -13,13 +14,14 @@ namespace ClientDiProva
         private HandlePackets clientConn;
         private User clientUser;
         private string monitorDir { get; set; }
-        private MyBuffer buffer;
+        private Watcher watcher;
+        private Timer timer;
 
         public HandleClientImpl(string serverIP, int port)
         {
             this.monitorDir = null;
             this.clientUser = null;
-            this.buffer = new MyBuffer();
+            this.watcher = null;
             try
             {
                 this.clientConn = new HandlePackets(serverIP, port);
@@ -30,29 +32,7 @@ namespace ClientDiProva
             }
         }
 
-        public void disconnect()
-        {
-            string code = "000";
-            try
-            {
-                GenericRequest request = new GenericRequest();
-                GenericRequest response = (GenericRequest)clientConn.doRequest(code, request);
-                if (response.error == null)
-                {
-                    Console.WriteLine(response.message);
-                    MyConsole.write(response.message);
-                }
-                else
-                {
-                    Console.WriteLine(response.error);
-                    MyConsole.write(response.error);
-                }
-            }
-            catch (Exception e)
-            {
-                MyConsole.write("Impossibile disconnettersi: " + e.Message);
-            }
-        }
+        
         public void setMonitorDir(string pathDir)
         {
             monitorDir = pathDir;
@@ -74,7 +54,7 @@ namespace ClientDiProva
         }
         public void loginRequest(string username, string password)
         {
-            string code = "003";
+            string code = "005";
             User user = new User(username, password);
             Login request = new Login(user);
             Login response = (Login)clientConn.doRequest(code, request);
@@ -94,41 +74,47 @@ namespace ClientDiProva
                 MyConsole.write(response.error);
             }
         }
-        public List<Version> askStoredVersions()
+        public void logoutRequest()
         {
-            MyConsole.write("Chiedo al server le versioni salvate");
-            string code = "007";
-            StoredVersions request = new StoredVersions();
+            string code = "000";
             try
             {
-                StoredVersions response = (StoredVersions)clientConn.doRequest(code, request);
-                if (response.storedVersions.Count == 0)
-                    MyConsole.write("Sul server non è presenta nessuna versione, crearne una nuova");
+                GenericRequest request = new GenericRequest();
+                GenericRequest response = (GenericRequest)clientConn.doRequest(code, request);
+                if (response.error == null)
+                {
+                    Console.WriteLine(response.message);
+                    MyConsole.write(response.message);
+                }
                 else
-                    MyConsole.write("Trovate " + response.storedVersions.Count + " versioni");
-                return response.storedVersions;
+                {
+                    Console.WriteLine(response.error);
+                    MyConsole.write(response.error);
+                }
             }
             catch (Exception e)
             {
-                MyConsole.write("Problema nella rete: " + e.Message);
-                throw;
+                MyConsole.write("Impossibile eseguire il logout: " + e.Message);
             }
-
         }
         public Version createNewVersion()
         {
             MyConsole.write("Richiesta di creazione nuova versione");
-            string code = "011";
-            DirTree dirTreeService = new DirTreeImpl();
+            string code = "006";
+            DirTreeService dirTreeService = new DirTreeServiceImpl();
             Dir dirTree = dirTreeService.makeDirTree(new Dir(monitorDir, null));
             CreateVersion request = new CreateVersion(new Version(dirTree));
             try
             {
                 CreateVersion response = (CreateVersion)clientConn.doRequest(code, request);
+                if(response.error!=null)
+                    throw new Exception(response.error);
                 List<String> elencoHash = response.elencoHash;
                 if (elencoHash.Count > 0)
-                    sendRequestedFile(dirTree, elencoHash);
-                MyConsole.write("La versione è stata creata correttamente sul server");
+                {
+                    Dictionary<string, File> fileMap = dirTreeService.getAllFileIntoAmap(dirTree);
+                    sendRequestedFile(fileMap, elencoHash);
+                }
                 return response.version;
             }
             catch (Exception e)
@@ -137,10 +123,33 @@ namespace ClientDiProva
                 throw;
             }
         }
+        public void updateVersion(MyBuffer bufferOperation)
+        {
+            MyConsole.write("Richiesta di aggiornamento della versione");
+            string code = "007";
+            try
+            {
+                UpdateVersion response = (UpdateVersion)clientConn.doRequest(code, new UpdateVersion(bufferOperation.list));
+                if (response.error != null)
+                    throw new Exception(response.error);
+                List<String> elencoHash = response.elencoHash;
+                if (elencoHash.Count > 0)
+                {
+                    Dictionary<string, File> fileMap = bufferOperation.getAllFileIntoAmap();
+                    sendRequestedFile(fileMap, elencoHash);
+                }
+                MyConsole.write("La versione e' stata aggiornata");
+                watcher.buffer.list.Clear();
+            }
+            catch (Exception e)
+            {
+                MyConsole.write(e.Message);
+            }
+        }
         public void closeVersion(Version version)
         {
             MyConsole.write("Richiesta di chiusura della versione");
-            string code = "008";
+            string code = "009";
             try
             {
                 CloseVersion response = (CloseVersion)clientConn.doRequest(code, new CloseVersion(version));
@@ -152,20 +161,18 @@ namespace ClientDiProva
                 MyConsole.write(e.Message);
                 throw;
             }
-
-
         }
         public Version restoreVersion(int idVersion)
         {
             MyConsole.write("Richiesta di ripristino della cartella");
-            string code = "012";
+            string code = "010";
             RestoreVersion request = new RestoreVersion(new Version(idVersion));
             try
             {
                 RestoreVersion response = (RestoreVersion)clientConn.doRequest(code, request);
                 Dir dirTree = response.version.dirTree;
                 List<File> elencoFile = response.elencoFile;
-                DirTree dirTreeService = new DirTreeImpl();
+                DirTreeService dirTreeService = new DirTreeServiceImpl();
                 dirTreeService.createDirTree(dirTree, @"c:\tmp");
                 requireMissingFile(elencoFile);
                 MyConsole.write("La version è stata ripristinata");
@@ -184,12 +191,19 @@ namespace ClientDiProva
                 List<Version> storedVersion = askStoredVersions();
                 if (storedVersion.Count == 0)
                 {
+                    MyConsole.write("Sul server non è presenta nessuna versione, ne creo una nuova");
                     Version version = createNewVersion(); //versione backup completo
                     closeVersion(version);                //voglio almeno una versione completa sul server
                     version = createNewVersion();         //versione corrente su cui lavorare
                 }
-                setWatcher(monitorDir);
+                watcher = new Watcher(monitorDir);
+                watcher.set();
                 Console.WriteLine("Watcher set");
+                timer = new Timer(10000);
+                timer.Elapsed += OnTimedEvent;
+                timer.AutoReset = true;
+                timer.Enabled = true;
+                Console.WriteLine("Timer set");
             }
             catch (Exception e)
             {
@@ -215,6 +229,25 @@ namespace ClientDiProva
             }
         }
 
+        private List<Version> askStoredVersions()
+        {
+            MyConsole.write("Chiedo al server le versioni salvate");
+            string code = "011";
+            StoredVersions request = new StoredVersions();
+            try
+            {
+                StoredVersions response = (StoredVersions)clientConn.doRequest(code, request);
+                if (response.error != null)
+                    throw new Exception(response.error);
+                return response.storedVersions;
+            }
+            catch (Exception e)
+            {
+                MyConsole.write("Problema nella rete: " + e.Message);
+                throw;
+            }
+
+        }
         private void requireMissingFile(List<File> elencoFile)
         {
             MyConsole.write(elencoFile.Count + " file devono essere trasferiti");
@@ -243,210 +276,74 @@ namespace ClientDiProva
                 MyConsole.write(e.Message);
             }
         }
-        private void sendRequestedFile(Dir dirTree, List<String> elencoHash)
+        private void sendRequestedFile(Dictionary<string, File> fileMap, List<String> elencoHash)
         {
-            DirTree dirTreeService = new DirTreeImpl();
-            Dictionary<string, File> fileMap = dirTreeService.getAllFileIntoAmap(dirTree);
             Console.WriteLine("File da inviare: " + elencoHash.Count);
             int i = 1;
             foreach (String hash in elencoHash)
             {
                 Console.WriteLine("invio file: " + (i++) + "/" + elencoHash.Count);
-                sendAfile(fileMap[hash]);
+                try
+                {
+                    if (fileMap.ContainsKey(hash))
+                        sendAfile(fileMap[hash]);
+                    else
+                    {
+                        Console.WriteLine("Il file: " + hash + "non e' più presente sul pc");
+                        //mandare una request per decrementare il countere dell'hash
+                    }     
+                }catch(Exception e)
+                {
+                    Console.WriteLine("Impossibile inviare il file " + e.Message);
+                }     
             }
             Console.WriteLine("Tutti i file sono stati inviati correttamente");
         }
         private void sendAfile(File file)
         {
-            string pathSrc = file.path;
-            WrapFile wrapFile = new WrapFile(file, file.size, new FileStream(pathSrc, FileMode.Open, FileAccess.Read));
+            string pathSrc = file.absolutePath;
+            WrapFile wrapFile;
             try
             {
-                wrapFile = (WrapFile)clientConn.doRequest("002", wrapFile);
-                if (wrapFile.error == null)
-                    MyConsole.write(wrapFile.message);
-                else
-                    MyConsole.write(wrapFile.error);
-            }
-            catch (Exception e)
+                wrapFile = new WrapFile(file, file.size, new FileStream(pathSrc, FileMode.Open, FileAccess.Read));
+                try
+                {
+                    wrapFile = (WrapFile)clientConn.doRequest("002", wrapFile);
+                    if (wrapFile.error == null)
+                        MyConsole.write(wrapFile.message);
+                    else
+                    {
+                        MyConsole.write(wrapFile.error);
+                        throw new Exception(wrapFile.error);
+                    }
+                }
+                catch (Exception e)
+                {
+                    MyConsole.write(e.Message);
+                }
+            }catch(Exception e)
             {
-                MyConsole.write(e.Message);
+                Console.WriteLine("impossibile creare il wrap file.. forse il file non esiste?");
             }
         }
-        private void setWatcher(string path)
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            // Create a new FileSystemWatcher and set its properties.
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = path;
-            /* Watch for changes in LastAccess and LastWrite times, and
-               the renaming of files or directories. */
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-               | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-
-            watcher.IncludeSubdirectories = true;
-
-            // Add event handlers.
-            watcher.Changed += new FileSystemEventHandler(OnChanged);
-            watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnChanged);
-            watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
-            // Begin watching.
-            watcher.EnableRaisingEvents = true;
+            Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}", e.SignalTime);
+            //printOperation(watcher.buffer.list);
+            if( watcher.buffer.list.Count>0 )
+                updateVersion(watcher.buffer);
         }
-
-        // Define the event handlers.
-        private void OnChanged(object source, FileSystemEventArgs e)
+        private void printOperation(List<Operation> list)
         {
-            FileSystemService fsService = new FileSystemServiceImpl();
-            if (fsService.isAfile(e.FullPath))
-                handleFileChange(e.ChangeType, e.FullPath, null);
-            else if (fsService.isAdir(e.FullPath))
-                handleDirChange(e.ChangeType, e.FullPath, null);
-        }
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            FileSystemService fsService = new FileSystemServiceImpl();
-            if (fsService.isAfile(e.FullPath))
-                handleFileChange(e.ChangeType, e.FullPath, e.OldFullPath);
-            else if (fsService.isAdir(e.FullPath))
-                handleDirChange(e.ChangeType, e.FullPath, e.OldFullPath);
-        }
-
-        private void handleFileChange(WatcherChangeTypes change, string path, string oldPath)
-        {
-            if (oldPath == null)
-                Console.WriteLine("File: " + path + " " + change);
-            else
-                Console.WriteLine("File: {0} renamed to {1}", oldPath, path);
-
-            FileSystemService fsService = new FileSystemServiceImpl();
-            CheckFile checkFile = new CheckFile();
-            File file = new File();
-
-            switch (change)
+            foreach (Operation operation in list)
             {
-                case WatcherChangeTypes.Created:
-                    checkFile.operation = "addFile";
-                    checkFile.file = new File(path, monitorDir);
-                    buffer.list.Add(checkFile);
-                    break;
-
-                case WatcherChangeTypes.Deleted:
-                    file = buffer.containsThisFile(fsService.getPathFromMonitorDir(path, monitorDir));
-                    if (file != null)
-                        buffer.removeThisFile(file);
-                    else
-                    {
-                        checkFile.operation = "deleteFile";
-                        checkFile.path = fsService.getPathFromMonitorDir(path, monitorDir);
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
-
-                case WatcherChangeTypes.Changed:
-                    file = buffer.containsThisFile(fsService.getPathFromMonitorDir(path, monitorDir));
-                    if (file != null)
-                    {
-                        File newfile = new File(path, monitorDir);
-                        file.hash = newfile.hash;
-                        file.size = newfile.size;
-                        file.lastWriteTime = newfile.lastWriteTime;
-                    }
-                    else
-                    {
-                        checkFile.operation = "updateFile";
-                        checkFile.file = new File(path, monitorDir);
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
-
-                case WatcherChangeTypes.Renamed:
-                    file = buffer.containsThisFile(fsService.getPathFromMonitorDir(oldPath, monitorDir));
-                    if (file != null)
-                    {
-                        File newfile = new File(path, monitorDir);
-                        file.name = newfile.name;
-                        file.path = newfile.path;
-                        file.extension = newfile.extension;
-                    }
-                    else
-                    {
-                        checkFile.operation = "renameFile";
-                        checkFile.oldPath = fsService.getPathFromMonitorDir(oldPath, monitorDir);
-                        checkFile.newPath = fsService.getPathFromMonitorDir(path, monitorDir);
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
+                Console.WriteLine(operation.type);
+                if (operation.dir != null) Console.WriteLine("DIR PATH: " + operation.dir.path);
+                if (operation.file != null) Console.WriteLine("FILE PATH: " + operation.file.path);
+                Console.WriteLine("PATH: " + operation.path);
             }
         }
-        private void handleDirChange(WatcherChangeTypes change, string path, string oldPath)
-        {
-            if (oldPath == null)
-                Console.WriteLine("Directory: " + path + " " + change);
-            else
-                Console.WriteLine("Directory: {0} renamed to {1}", oldPath, path);
-
-            FileSystemService fsService = new FileSystemServiceImpl();
-            CheckFile checkFile = new CheckFile();
-            File file = new File();
-            Dir dir;
-
-            switch (change)
-            {
-                case WatcherChangeTypes.Created:
-                    checkFile.operation = "addDir";
-                    dir = new Dir(fsService.getPathFromMonitorDir(path, monitorDir));
-                    dir.setCreationTime(path);
-                    dir.setLastWriteTime(path);
-                    checkFile.dir = dir;   
-                    buffer.list.Add(checkFile);
-                    break;
-
-                case WatcherChangeTypes.Deleted:
-                    checkFile = buffer.containsThisDir(fsService.getPathFromMonitorDir(path, monitorDir));
-                    if (checkFile != null)
-                        buffer.removeThisDir(path);
-                    else
-                    {
-                        checkFile = new CheckFile();
-                        checkFile.operation = "deleteDir";
-                        checkFile.path = fsService.getPathFromMonitorDir(path, monitorDir);
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
-
-                case WatcherChangeTypes.Changed:
-                    checkFile = buffer.containsThisDir(fsService.getPathFromMonitorDir(path, monitorDir));
-                    if (checkFile != null)
-                        checkFile.dir.lastWriteTime = Directory.GetLastWriteTime(path);
-                    else
-                    {
-                        checkFile = new CheckFile();
-                        checkFile.operation = "updateDir";
-                        dir = new Dir(fsService.getPathFromMonitorDir(path, monitorDir));
-                        dir.setLastWriteTime(path);
-                        checkFile.dir = dir;   
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
-
-                case WatcherChangeTypes.Renamed:
-                    checkFile = buffer.containsThisDir(fsService.getPathFromMonitorDir(oldPath, monitorDir));
-                    if (checkFile != null)
-                    {
-                        checkFile.path = path;
-                    }
-                    else
-                    {
-                        checkFile = new CheckFile();
-                        checkFile.operation = "renameDir";
-                        checkFile.oldPath = fsService.getPathFromMonitorDir(oldPath, monitorDir);
-                        checkFile.newPath = fsService.getPathFromMonitorDir(path, monitorDir);
-                        buffer.list.Add(checkFile);
-                    }
-                    break;
-            }
-        }
+        
     }
 }

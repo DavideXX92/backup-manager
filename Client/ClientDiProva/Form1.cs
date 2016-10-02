@@ -47,7 +47,7 @@ namespace ClientDiProva
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
-            hc.disconnect();
+            hc.logoutRequest();
         }
 
         private void loginRequest_Click(object sender, EventArgs e)

@@ -120,7 +120,7 @@ namespace newServerWF
                     dbConnect = new DBConnect();
                     MySqlConnection conn = dbConnect.OpenConnection();
 
-                    string query = "UPDATE file SET idHash=@idHash, size=@size lastWriteTime=@lastWriteTime WHERE idUser=@idUser AND idVersion=@idVersion AND idFile=@idFile";
+                    string query = "UPDATE file SET idHash=@idHash, size=@size, lastWriteTime=@lastWriteTime WHERE idUser=@idUser AND idVersion=@idVersion AND idFile=@idFile";
 
                     MySqlCommand cmd = new MySqlCommand();
                     cmd.Connection = conn;
@@ -148,39 +148,21 @@ namespace newServerWF
         }
         public void deleteFile(int idUser, int idVersion, int idFile)
         {
-            DBConnect dbConnect = null;
-            try
-            {
-                using (TransactionScope scope = new TransactionScope())
-                {
-                    int idHash = getIdHash(idUser, idVersion, idFile);
-                    HashDao hashDao = new HashDaoImpl();
-                    hashDao.changeCounterOfHash(idHash, idUser, -1);
-                    dbConnect = new DBConnect();
-                    MySqlConnection conn = dbConnect.OpenConnection();
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
 
-                    string query = "DELETE FROM file WHERE idUser=@idUser AND idVersion=@idVersion AND idFile=@idFile";
+            string query = "DELETE FROM file WHERE idUser=@idUser AND idVersion=@idVersion AND idFile=@idFile";
 
-                    MySqlCommand cmd = new MySqlCommand();
-                    cmd.Connection = conn;
-                    cmd.CommandText = query;
-                    cmd.Prepare();
-                    cmd.Parameters.AddWithValue("@idUser", idUser);
-                    cmd.Parameters.AddWithValue("@idVersion", idVersion);
-                    cmd.Parameters.AddWithValue("@idFile", idFile);
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+            cmd.Parameters.AddWithValue("@idVersion", idVersion);
+            cmd.Parameters.AddWithValue("@idFile", idFile);
 
-                    cmd.ExecuteNonQuery();
-                    scope.Complete();
-                    dbConnect.CloseConnection();
-                }
-            }
-            catch (Exception e)
-            {
-                if (dbConnect != null)
-                    dbConnect.CloseConnection();
-                Console.WriteLine(e.Message);
-                throw;
-            }    
+            cmd.ExecuteNonQuery();
+            dbConnect.CloseConnection();
         }
         public void renameFile(int idUser, int idVersion, int idFile, string newName)
         {

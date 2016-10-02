@@ -15,16 +15,17 @@ namespace newServerWF
         void stop();
 
         GenericRequest closeConnectionWithTheClient(GenericRequest request);
-        Login handleLogin(Login loginRequest);
-        Register handleRegistration(Register request);
-        CreateVersion createNewVersion(CreateVersion request);
-        CloseVersion closeVersion(CloseVersion request);
-        RestoreVersion restoreVersion(RestoreVersion request);
-        StoredVersions sendStoredVersions(StoredVersions request);
         WrapFile handleRequestOfFile(File file);
         WrapFile initializeReceiptOfFile(File file);
         WrapFile fileReceived(WrapFile wrapFile);
-
+        Register handleRegistration(Register request);
+        Login handleLogin(Login loginRequest);
+        CreateVersion createNewVersion(CreateVersion request);
+        UpdateVersion updateVersion(UpdateVersion request);
+        CloseVersion closeVersion(CloseVersion request);
+        RestoreVersion restoreVersion(RestoreVersion request);
+        StoredVersions sendStoredVersions(StoredVersions request);
+        
         CheckFile checkFile(CheckFile request);
     }
 }
