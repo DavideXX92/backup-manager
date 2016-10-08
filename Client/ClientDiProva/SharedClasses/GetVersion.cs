@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace ClientDiProva
 {
-    class RestoreVersion : GenericRequest
+    class GetVersion : GenericRequest
     {
         public Version version { get; set; }
-        public List<File> elencoFile { get; set; }
 
-        public RestoreVersion()
+        public GetVersion()
         {
         }
 
-        public RestoreVersion(Version version)
+        public GetVersion(Version version)
         {
             this.version = version;
-            this.elencoFile = new List<File>();
         }
     }
 }

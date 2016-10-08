@@ -47,14 +47,14 @@ namespace newServerWF
                 if (e.InnerException != null)
                     Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
                 Console.WriteLine("Authentication failed - closing the connection.");
-                MyConsole.write("Authentication failed - closing the connection");
+                MyConsole.Write("Authentication failed - closing the connection");
                 this.netStream.Close();
                 this.client.Close(); 
                 throw;
             }
             catch(Exception e){
                 Console.WriteLine("Certificate Error: ", e.Message);
-                MyConsole.write("Certificate Error:" + e.Message + "closing the connection");
+                MyConsole.Write("Certificate Error:" + e.Message + "closing the connection");
                 throw;
             }
             this.invokeFunc = invokeFunc;
@@ -65,7 +65,6 @@ namespace newServerWF
             isListen = true;
             loopReadMessage();
         }
-
         public void stopListen()
         {
             isListen = false;
@@ -111,14 +110,16 @@ namespace newServerWF
             {
                 //Receive size
                 byte[] lengthBytes = new byte[sizeof(int)];
-                int bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                //int bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                int bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
                 int length = BitConverter.ToInt32(lengthBytes, 0);
 
                 int bytesReamining = length;
                 int bytesReceived = 0;
                 bytesRead = 0;
                 int bytesToRead;
-                int chunk = DIMBUF;
+                //int chunk = DIMBUF;
+                int chunk = 1024;
 
                 while (bytesReamining > 0)
                 {
@@ -127,7 +128,8 @@ namespace newServerWF
                     else
                         bytesToRead = bytesReamining;
 
-                    bytesRead = netStream.Read(rBuffer, 0, bytesToRead);
+                    //bytesRead = netStream.Read(rBuffer, 0, bytesToRead);
+                    bytesRead = myReceive(netStream, rBuffer, 0, bytesToRead);
                     if (bytesRead < 0)
                         break;
                     wrapFile.fs.Write(rBuffer, 0, bytesRead);
@@ -153,16 +155,17 @@ namespace newServerWF
 
             while (client.Connected && isListen)
             {
-                bytesRead = netStream.Read(codeBytes, 0, codeBytes.Length);
+                //bytesRead = netStream.Read(codeBytes, 0, codeBytes.Length);
+                bytesRead = myReceive(netStream, codeBytes, 0, codeBytes.Length);
                 if (bytesRead <= 0)
                 {
                     isListen = false;
-                    MyConsole.write(Thread.CurrentThread.ManagedThreadId + " Connection lost with the client...");
+                    MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Connection lost with the client...");
                 }
                 else
                 {
                     receive = Encoding.ASCII.GetString(codeBytes, 0, bytesRead);
-                    MyConsole.write("You: " + receive);
+                    MyConsole.Write("You: " + receive);
                     try
                     {
                         Object obj = receivePacket();
@@ -204,7 +207,7 @@ namespace newServerWF
             netStream.Write(wBuffer, 0, wBuffer.Length);
             client.Close();
             netStream.Close();
-            MyConsole.write("Client " + Thread.CurrentThread.ManagedThreadId + " disconnected");
+            MyConsole.Write("Client " + Thread.CurrentThread.ManagedThreadId + " disconnected");
         }
         private Object receivePacket()
         {
@@ -212,7 +215,8 @@ namespace newServerWF
             byte[] lengthBytes = new byte[sizeof(int)];
             Object obj;
 
-            bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+            //bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+            bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
             length = BitConverter.ToInt32(lengthBytes, 0);
 
             if (length != 0)
@@ -230,7 +234,8 @@ namespace newServerWF
             int bytesReceived = 0;
             int bytesRead;
             int bytesToRead;
-            int chunk = DIMBUF;
+            //int chunk = DIMBUF;
+            int chunk = 1024;
             string json;
 
             while (bytesReamining > 0)
@@ -240,7 +245,8 @@ namespace newServerWF
                 else
                     bytesToRead = bytesReamining;
 
-                bytesRead = netStream.Read(rBuffer, bytesReceived, bytesToRead);
+                //bytesRead = netStream.Read(rBuffer, bytesReceived, bytesToRead);
+                bytesRead = myReceive(netStream, rBuffer, bytesReceived, bytesToRead);
                 if (bytesRead < 0)
                     break;
                 bytesReceived += bytesRead;
@@ -250,7 +256,6 @@ namespace newServerWF
             {
                 byte[] objBytes = new byte[length];
                 Buffer.BlockCopy(rBuffer, 0, objBytes, 0, length);
-                //Object obj = ByteArrayToObject(objBytes);
                 json = Encoding.ASCII.GetString(objBytes, 0, length);
                 Object obj = (Object)json;
                 return obj;
@@ -267,7 +272,8 @@ namespace newServerWF
 
             try
             {
-                json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
+                //json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
+                json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize, PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects });
 
                 //Console.WriteLine(json);
                 objBuffer = ASCIIEncoding.ASCII.GetBytes(json);
@@ -294,14 +300,16 @@ namespace newServerWF
             
         }
 
-        private int myReceive(NetworkStream netStream, byte[] buffer, int bytesToRead){
+        private int myReceive(SslStream netStream, byte[] bufferDst, int offset, int bytesToRead){
+            byte[] buffer = new byte[bytesToRead];
             int bytesRead = 0;
             do
             {
-                bytesRead += netStream.Read(buffer, bytesRead, bytesToRead);
+                bytesRead += netStream.Read(buffer, bytesRead, 1);
                 if (bytesRead <= 0)
                     throw new Exception("Errore nella ricezione: connessione col client persa");
-            } while (netStream.DataAvailable);
+            } while (bytesRead<bytesToRead);
+            Buffer.BlockCopy(buffer, 0, bufferDst, offset, bytesToRead);
             return bytesRead;
         }
     }

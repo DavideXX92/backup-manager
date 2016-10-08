@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,18 +10,55 @@ namespace newServerWF
 {
     static class MyConsole
     {
-        private static Form1.delegato dele = null;
+        private static Form1.WriteOnConsoleDel writeOnConsole = null;
+        private static string serverLogPath = null;
+        private static string clientLogPath = null;
 
-        public static void setDel(Form1.delegato del)
+        public static void setConsole(Form1.WriteOnConsoleDel del)
         {
-            dele = del;
+            writeOnConsole = del;
+        }
+        
+        public static void setClientLog(string filePath)
+        {
+            clientLogPath = filePath;
         }
 
-        public static void write(string str){
-            if (dele == null)
+        public static void setServerLog(string filePath)
+        {
+            serverLogPath = filePath;
+        }
+
+        public static void Write(string str){
+            
+            if (writeOnConsole == null)
                 Console.WriteLine(str);
             else
-                dele(str);
+                writeOnConsole(str);
+
+            if (serverLogPath == null)
+                Console.WriteLine("il file di log del server non e' stato settato");
+            else
+            {
+                using (StreamWriter w = System.IO.File.AppendText(serverLogPath))
+                {
+                    w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + str);
+                }
+            }
+                
+        }
+
+        public static void Log(string logMessage)
+        {
+            if (clientLogPath == null)
+                Console.WriteLine("il file di log del client non e' stato settato");
+            else
+            {
+                using (StreamWriter w = System.IO.File.AppendText(clientLogPath))
+                {
+                    w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + logMessage);
+                }
+            }
         }
     }
 }

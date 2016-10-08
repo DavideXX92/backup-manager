@@ -116,7 +116,8 @@ namespace ClientDiProva
             {
                 //Receive size
                 byte[] lengthBytes = new byte[sizeof(int)];
-                int bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                //int bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                int bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
                 int length = BitConverter.ToInt32(lengthBytes, 0);
 
                 int bytesReamining = length;
@@ -132,7 +133,9 @@ namespace ClientDiProva
                     else
                         bytesToRead = bytesReamining;
 
-                    bytesRead = netStream.Read(rBuffer, 0, bytesToRead);
+                    //bytesRead = netStream.Read(rBuffer, 0, bytesToRead);
+                    bytesRead = myReceive(netStream, rBuffer, 0, bytesToRead);
+
                     if (bytesRead < 0)
                         break;
                     wrapFile.fs.Write(rBuffer, 0, bytesRead);
@@ -155,7 +158,9 @@ namespace ClientDiProva
             {
                 sendPacket(code, objRequest);
 
-                bytesRead = netStream.Read(codeBytes, 0, codeBytes.Length);
+                //bytesRead = netStream.Read(codeBytes, 0, codeBytes.Length);
+                bytesRead = myReceive(netStream, codeBytes, 0, codeBytes.Length);
+
                 if (bytesRead <= 0)
                 {
                     MyConsole.write(Thread.CurrentThread.ManagedThreadId + " Connection lost with the client...");
@@ -243,7 +248,8 @@ namespace ClientDiProva
 
             try
             {
-                bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                //bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
+                bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
                 length = BitConverter.ToInt32(lengthBytes, 0);
 
                 obj = receiveObject(length);
@@ -271,7 +277,8 @@ namespace ClientDiProva
                 else
                     bytesToRead = bytesReamining;
 
-                bytesRead = netStream.Read(rBuffer, bytesReceived, bytesToRead);
+                //bytesRead = netStream.Read(rBuffer, bytesReceived, bytesToRead);
+                bytesRead = myReceive(netStream, rBuffer, bytesReceived, bytesToRead);
                 if (bytesRead < 0)
                     break;
                 bytesReceived += bytesRead;
@@ -291,5 +298,18 @@ namespace ClientDiProva
                 throw new Exception("Impossibile ricevere il file (l'object), problema di rete");        
         }
 
+        private int myReceive(SslStream netStream, byte[] bufferDst, int offset, int bytesToRead)
+        {
+            byte[] buffer = new byte[bytesToRead];
+            int bytesRead = 0;
+            do
+            {
+                bytesRead += netStream.Read(buffer, bytesRead, 1);
+                if (bytesRead <= 0)
+                    throw new Exception("Errore nella ricezione: connessione col client persa");
+            } while (bytesRead < bytesToRead);
+            Buffer.BlockCopy(buffer, 0, bufferDst, offset, bytesToRead);
+            return bytesRead;
+        }
     }
 }

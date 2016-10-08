@@ -45,5 +45,6 @@ namespace ClientDiProva
             this.dateCreation = dateCreation;
             this.dateClosed = dateClosed;
         }
+
     }
 }

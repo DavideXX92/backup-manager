@@ -9,11 +9,10 @@ namespace newServerWF
     class UpdateVersion : GenericRequest
     {
         public List<Operation> list {get; set;}
-        public List<String> elencoHash { get; set; }
         
         public UpdateVersion()
         {
-            list = new List<Operation>();
+            //list = new List<Operation>();
         }
 
         public UpdateVersion(List<Operation> list)

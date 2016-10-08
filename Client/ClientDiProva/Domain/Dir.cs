@@ -12,6 +12,7 @@ namespace ClientDiProva
         public int idDir { get; set; }
         public string name { get; set; }
         public string path { get; set; }
+        public string relativePath { get; set; }
         public DateTime creationTime { get; set; }
         public DateTime lastWriteTime { get; set; }
         public Dir parentDir { get; set; }
@@ -25,6 +26,18 @@ namespace ClientDiProva
         public Dir(string path, Dir parentDir)
         {
             this.path = path;
+            this.name = path.Substring(path.LastIndexOf(@"\"));
+            this.parentDir = parentDir;
+            elencoSubdirectory = new List<Dir>();
+            elencoFile = new List<File>();
+            this.creationTime = Directory.GetCreationTime(path);
+            this.lastWriteTime = Directory.GetLastWriteTime(path);
+        }
+
+        public Dir(string path, Dir parentDir, string monitorDir)
+        {
+            this.path = path;
+            this.relativePath = getPathFromMonitorDir(path, monitorDir);
             this.name = path.Substring(path.LastIndexOf(@"\"));
             this.parentDir = parentDir;
             elencoSubdirectory = new List<Dir>();
@@ -60,6 +73,27 @@ namespace ClientDiProva
         public void setLastWriteTime(string fullPath)
         {
             this.lastWriteTime = Directory.GetLastWriteTime(fullPath);
+        }
+
+        private bool containsThisFile(File fileToSearch){
+            foreach(File file in elencoFile)
+                if (fileToSearch == file)
+                    return true;
+            return false;
+        }
+
+        private bool containsThisDir(Dir dirToSearch)
+        {
+            foreach (Dir dir in elencoSubdirectory)
+                if (dirToSearch == dir)
+                    return true;
+            return false;
+        }
+
+        private string getPathFromMonitorDir(string path, string monitorDirPath)
+        {
+            string monitorDirName = monitorDirPath.Substring(monitorDirPath.LastIndexOf(@"\"));
+            return monitorDirName + path.Substring(monitorDirPath.Length);
         }
 
     }

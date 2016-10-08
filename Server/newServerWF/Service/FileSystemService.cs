@@ -16,6 +16,7 @@ namespace newServerWF
         void deleteFile(string username, int version, string path);
         void setFileAsReceived(string username, string hash);
         List<string> getAllHashToBeingReceived(string username);
+        int cleaner(string serverDirRoot, string username);
         
         /*DIR OPERATIONS*/
         bool checkIfDirExists(string username, int version, string path);

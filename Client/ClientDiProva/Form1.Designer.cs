@@ -43,6 +43,7 @@
             this.restore = new System.Windows.Forms.Button();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.testButton = new System.Windows.Forms.Button();
+            this.checkVersion = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // connectButton
@@ -191,11 +192,22 @@
             this.testButton.UseVisualStyleBackColor = true;
             this.testButton.Click += new System.EventHandler(this.testButton_Click);
             // 
+            // checkVersion
+            // 
+            this.checkVersion.Location = new System.Drawing.Point(144, 127);
+            this.checkVersion.Name = "checkVersion";
+            this.checkVersion.Size = new System.Drawing.Size(178, 23);
+            this.checkVersion.TabIndex = 15;
+            this.checkVersion.Text = "checkIfCurrentVersionIsUpdated";
+            this.checkVersion.UseVisualStyleBackColor = true;
+            this.checkVersion.Click += new System.EventHandler(this.checkVersion_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(482, 351);
+            this.Controls.Add(this.checkVersion);
             this.Controls.Add(this.testButton);
             this.Controls.Add(this.disconnectButton);
             this.Controls.Add(this.restore);
@@ -235,6 +247,7 @@
         private System.Windows.Forms.Button restore;
         private System.Windows.Forms.Button disconnectButton;
         private System.Windows.Forms.Button testButton;
+        private System.Windows.Forms.Button checkVersion;
     }
 }
 

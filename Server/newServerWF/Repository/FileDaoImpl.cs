@@ -12,7 +12,7 @@ namespace newServerWF
 {
     class FileDaoImpl : FileDao
     {
-        public int getMaxIdFile(int idUser, int idVersion)
+        private int getMaxIdFile(int idUser, int idVersion)
         {
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
@@ -25,16 +25,11 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idVersion", idVersion);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
+            int idFile = -1;
             dataReader.Read();
-            int idFile;
-            try
-            {
+            if (!dataReader.IsDBNull(0))
                 idFile = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idFile = -1;
-            }
+           
             dbConnect.CloseConnection();
             return idFile;
         }
@@ -229,7 +224,7 @@ namespace newServerWF
             dbConnect.CloseConnection();
             return elencoFile;
         }
-    
+
         private int checkIfFileExistsFromName(int idUser, int idVersion, string name, int idDir)
         {
             DBConnect dbConnect = new DBConnect();
@@ -268,15 +263,11 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idFile", idFile);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
-            dataReader.Read();
-            int idHash;
-            try
+            int idHash = -1;
+            if(dataReader.HasRows)
             {
+                dataReader.Read();
                 idHash = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idHash = -1;
             }
             dbConnect.CloseConnection();
             return idHash;

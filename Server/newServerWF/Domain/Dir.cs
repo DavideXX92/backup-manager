@@ -12,6 +12,7 @@ namespace newServerWF
         public int idDir { get; set; }
         public string name { get; set; }
         public string path { get; set; }
+        public string relativePath { get; set; }
         public DateTime creationTime { get; set; }
         public DateTime lastWriteTime { get; set; }
         public Dir parentDir { get; set; }
@@ -41,6 +42,7 @@ namespace newServerWF
                 this.path = name;
             else
                 this.path = parentDir.path + name;
+            this.relativePath = path;
             this.creationTime = creationTime;
             this.lastWriteTime = lastWriteTime;
             this.parentDir = parentDir;

@@ -14,18 +14,23 @@ namespace newServerWF
         HandleClient startLoop();
         void stop();
 
+        GenericRequest helloMessage(GenericRequest request);
         GenericRequest closeConnectionWithTheClient(GenericRequest request);
         WrapFile handleRequestOfFile(File file);
         WrapFile initializeReceiptOfFile(File file);
         WrapFile fileReceived(WrapFile wrapFile);
         Register handleRegistration(Register request);
         Login handleLogin(Login loginRequest);
+        MonitorDir changeMonitorDir(MonitorDir request);
+        MonitorDir getMonitorDir(MonitorDir request);
         CreateVersion createNewVersion(CreateVersion request);
         UpdateVersion updateVersion(UpdateVersion request);
         CloseVersion closeVersion(CloseVersion request);
-        RestoreVersion restoreVersion(RestoreVersion request);
-        StoredVersions sendStoredVersions(StoredVersions request);
-        
+        StoredVersions getIDofAllVersions(StoredVersions request);
+        GetVersion getVersion(GetVersion request);
+        GetVersion getOpenVersion(GetVersion request);
+        HashRequest sendHashToBeingReceived(HashRequest request);
+
         CheckFile checkFile(CheckFile request);
     }
 }

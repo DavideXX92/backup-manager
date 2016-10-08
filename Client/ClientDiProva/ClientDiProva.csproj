@@ -62,17 +62,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\NetworkException.cs" />
+    <Compile Include="Exceptions\ServerException.cs" />
+    <Compile Include="Service\NetworkService.cs" />
+    <Compile Include="Service\NetworkServiceImpl.cs" />
+    <Compile Include="SharedClasses\HashRequest.cs" />
+    <Compile Include="SharedClasses\MonitorDir.cs" />
     <Compile Include="SharedClasses\Operation.cs" />
     <Compile Include="Service\FileSystemService.cs" />
     <Compile Include="Service\FileSystemServiceImpl.cs" />
     <Compile Include="MyBuffer.cs" />
     <Compile Include="SharedClasses\CheckFile.cs" />
     <Compile Include="SharedClasses\CloseVersion.cs" />
-    <Compile Include="Controller\HandleClient.cs" />
+    <Compile Include="Controller\OLDHandleClient.cs" />
     <Compile Include="Service\DirTreeService.cs" />
     <Compile Include="Service\DirTreeServiceImpl.cs" />
-    <Compile Include="Controller\HandleClientImpl.cs" />
-    <Compile Include="SharedClasses\RestoreVersion.cs" />
+    <Compile Include="Controller\OLDHandleClientImpl.cs" />
+    <Compile Include="SharedClasses\GetVersion.cs" />
     <Compile Include="Domain\Dir.cs" />
     <Compile Include="SharedClasses\GenericRequest.cs" />
     <Compile Include="Domain\File.cs" />
@@ -97,6 +103,8 @@
     <Compile Include="SharedClasses\StoredVersions.cs" />
     <Compile Include="Domain\Version.cs" />
     <Compile Include="SharedClasses\UpdateVersion.cs" />
+    <Compile Include="Controller\UserController.cs" />
+    <Compile Include="Controller\UserControllerImpl.cs" />
     <Compile Include="Watcher.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

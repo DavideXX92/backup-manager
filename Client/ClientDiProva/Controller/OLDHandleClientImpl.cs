@@ -9,19 +9,21 @@ using System.Timers;
 
 namespace ClientDiProva
 {
-    class HandleClientImpl : HandleClient
+    /*class HandleClientImpl : HandleClient
     {
         private HandlePackets clientConn;
         private User clientUser;
         private string monitorDir { get; set; }
         private Watcher watcher;
         private Timer timer;
+        private int idCurrentVersion;
 
         public HandleClientImpl(string serverIP, int port)
         {
             this.monitorDir = null;
             this.clientUser = null;
             this.watcher = null;
+            this.idCurrentVersion = -1;
             try
             {
                 this.clientConn = new HandlePackets(serverIP, port);
@@ -31,11 +33,25 @@ namespace ClientDiProva
                 throw;
             }
         }
-
-        
+      
         public void setMonitorDir(string pathDir)
         {
-            monitorDir = pathDir;
+            string code = "012";
+            try
+            {
+                MonitorDir response = (MonitorDir)clientConn.doRequest(code, new MonitorDir(pathDir));
+                if (response.error != null)
+                {
+                    Console.WriteLine(response.error);
+                    throw new Exception(response.error);
+                }
+                monitorDir = pathDir;
+                Console.WriteLine(response.message);
+            }
+            catch (Exception e)
+            {
+                MyConsole.write("Impossibile settare la cartella da monitorare: " + e.Message);
+            }
         }
         public void registerRequest(string username, string password)
         {
@@ -52,27 +68,30 @@ namespace ClientDiProva
                 Console.WriteLine(response.error);
             }
         }
-        public void loginRequest(string username, string password)
+        public string loginRequest(string username, string password)
         {
             string code = "005";
+            string monitorDir = null;
             User user = new User(username, password);
             Login request = new Login(user);
-            Login response = (Login)clientConn.doRequest(code, request);
-            if (response.error == null)
+            try
             {
+                Login response = (Login)clientConn.doRequest(code, request);
+                if (response.error != null)
+                {
+                    Console.WriteLine(response.error);
+                    throw new Exception(response.error);
+                }
                 user = response.user;
                 clientUser = user;
+                monitorDir = user.monitorDir;
                 Console.WriteLine(response.message);
-                MyConsole.write("Logged");
-                MyConsole.write("id: " + user.idUser);
-                MyConsole.write("User: " + user.username);
-                MyConsole.write("Pass: " + user.password);
-                List<Version> versionList = askStoredVersions();
             }
-            else
+            catch (Exception e)
             {
-                MyConsole.write(response.error);
+                MyConsole.write("Impossibile eseguire il login: " + e.Message);
             }
+            return monitorDir;
         }
         public void logoutRequest()
         {
@@ -96,6 +115,23 @@ namespace ClientDiProva
             {
                 MyConsole.write("Impossibile eseguire il logout: " + e.Message);
             }
+        }
+        public Version addNewVersion()
+        {
+            try
+            {
+                if (idCurrentVersion != -1)
+                    closeVersion(idCurrentVersion);
+                Version version = createNewVersion();
+                idCurrentVersion = version.idVersion;
+                return version;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Impossibile creare una nuova versione");
+                throw e;
+            }
+            
         }
         public Version createNewVersion()
         {
@@ -146,13 +182,13 @@ namespace ClientDiProva
                 MyConsole.write(e.Message);
             }
         }
-        public void closeVersion(Version version)
+        public void closeVersion(int idVersion)
         {
             MyConsole.write("Richiesta di chiusura della versione");
             string code = "009";
             try
             {
-                CloseVersion response = (CloseVersion)clientConn.doRequest(code, new CloseVersion(version));
+                CloseVersion response = (CloseVersion)clientConn.doRequest(code, new CloseVersion(idVersion));
                 if (response.error != null)
                     throw new Exception(response.error);
             }
@@ -184,6 +220,41 @@ namespace ClientDiProva
                 throw;
             }
         }
+        public List<Version> askStoredVersions()
+        {
+            MyConsole.write("Chiedo al server le versioni salvate");
+            string code = "011";
+            StoredVersions request = new StoredVersions();
+            try
+            {
+                StoredVersions response = (StoredVersions)clientConn.doRequest(code, request);
+                if (response.error != null)
+                    throw new Exception(response.error);
+                return response.storedVersions;
+            }
+            catch (Exception e)
+            {
+                MyConsole.write("Problema nella rete: " + e.Message);
+                throw;
+            }
+        }
+        public List<string> askHashToSend()
+        {
+            MyConsole.write("Chiedo al server i file che non sono ancora stati ricevuti");
+            string code = "014";
+            try
+            {
+                HashRequest response = (HashRequest)clientConn.doRequest(code, new HashRequest());
+                if (response.error != null)
+                    throw new Exception(response.error);
+                return response.elencoHash;
+            }
+            catch (Exception e)
+            {
+                MyConsole.write("Problema nella rete: " + e.Message);
+                throw;
+            }
+        }
         public void synchronize()
         {
             try
@@ -193,8 +264,18 @@ namespace ClientDiProva
                 {
                     MyConsole.write("Sul server non è presenta nessuna versione, ne creo una nuova");
                     Version version = createNewVersion(); //versione backup completo
-                    closeVersion(version);                //voglio almeno una versione completa sul server
+                    idCurrentVersion = version.idVersion;
+                    closeVersion(idCurrentVersion);       //voglio almeno una versione completa sul server
                     version = createNewVersion();         //versione corrente su cui lavorare
+                    idCurrentVersion = version.idVersion;
+                }
+                else
+                {
+                    List<string> elencoHash = askHashToSend();
+                    DirTreeService dirTreeService = new DirTreeServiceImpl();
+                    Dir dirTree = new Dir(monitorDir, null);
+                    dirTreeService.makeDirTree(dirTree);
+                    sendRequestedFile(dirTreeService.getAllFileIntoAmap(dirTree), elencoHash);
                 }
                 watcher = new Watcher(monitorDir);
                 watcher.set();
@@ -229,25 +310,6 @@ namespace ClientDiProva
             }
         }
 
-        private List<Version> askStoredVersions()
-        {
-            MyConsole.write("Chiedo al server le versioni salvate");
-            string code = "011";
-            StoredVersions request = new StoredVersions();
-            try
-            {
-                StoredVersions response = (StoredVersions)clientConn.doRequest(code, request);
-                if (response.error != null)
-                    throw new Exception(response.error);
-                return response.storedVersions;
-            }
-            catch (Exception e)
-            {
-                MyConsole.write("Problema nella rete: " + e.Message);
-                throw;
-            }
-
-        }
         private void requireMissingFile(List<File> elencoFile)
         {
             MyConsole.write(elencoFile.Count + " file devono essere trasferiti");
@@ -345,5 +407,5 @@ namespace ClientDiProva
             }
         }
         
-    }
+    }*/
 }

@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace ClientDiProva
 {
-    class CreateVersion : GenericRequest
+    class ServerException : Exception
     {
-        public Version version { get; set; }
-
-        public CreateVersion()
+        public ServerException() 
+            : base()
         {
         }
 
-        public CreateVersion(Version version)
+        public ServerException(string message)
+            : base(message)
         {
-            this.version = version;
         }
     }
-
 }

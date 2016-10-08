@@ -15,14 +15,14 @@ namespace newServerWF
         private enum state_t { on, off };
         private state_t state;
         private ServerTCP server;
-        public delegate void delegato(string str);
+        public delegate void WriteOnConsoleDel(string str);
 
         public Form1()
         {
             state = state_t.off;
             InitializeComponent();
-            delegato del = (str) => { consoleWrite = str; };
-            MyConsole.setDel(del);
+            WriteOnConsoleDel del = (str) => { consoleWrite = str; };
+            MyConsole.setConsole(del);
         }
 
         public string consoleWrite
@@ -52,6 +52,7 @@ namespace newServerWF
                 portBox.ReadOnly = false;
             }
         }
+
 
     }
 }

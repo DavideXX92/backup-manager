@@ -5,18 +5,25 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace newServerWF
 {
     class HandleClientImpl : HandleClient
     {
+        private const int nOfMaxVersionToSaveForUser = 3;
+        private const string serverDirRoot = @"c:\ServerDir\";
+
+        private FileSystemService fsService;
+        private UserService userService;
+        private VersionService versionService;
+
         private TcpClient client;
         private HandlePackets clientConn;
         private Dizionario dizionario; //Class to associate messages with functions
 
         private User clientUser;
         private bool isLogged;
-        private string serverDirRoot = @"c:\ServerDir\";
         private string clientDir;
 
         public HandleClientImpl(TcpClient client)
@@ -26,6 +33,9 @@ namespace newServerWF
             this.clientUser = null;
             this.clientDir = null;
             this.dizionario = new Dizionario(this);
+            this.fsService = new FileSystemServiceImpl();
+            this.userService = new UserServiceImpl();
+            this.versionService = new VersionServiceImpl();
         }
 
         public HandleClient startLoop()
@@ -37,7 +47,7 @@ namespace newServerWF
             }
             catch (Exception e)
             {
-                MyConsole.write("C'è stato un errore, chiudo la connessione con il client... dovrei vedere se riesco a ripristinarla piuttosto che chiuderla");
+                MyConsole.Write("C'è stato un errore, chiudo la connessione con il client... dovrei vedere se riesco a ripristinarla piuttosto che chiuderla");
             }
             return this;
         }
@@ -46,6 +56,11 @@ namespace newServerWF
             clientConn.stopListen(); 
         }
 
+        public GenericRequest helloMessage(GenericRequest request)
+        {
+            request.message = "hello message ack";
+            return request;
+        }
         public GenericRequest closeConnectionWithTheClient(GenericRequest request)
         {
             try
@@ -56,19 +71,18 @@ namespace newServerWF
             }
             catch (Exception e)
             {
-                request.error = "Errore durante la disconessione: " + e.Message;
+                request.error = e.Message;
                 return request;
             }
         }
         public Register handleRegistration(Register registerRequest)
         {
             User user = registerRequest.user;
-            UserService userService = new UserServiceImpl();
             Register registerResponse = new Register(user);
             if (userService.checkIfUsernameExists(user.username))
             {
                 Console.WriteLine("Impossibile registrare l'utente: " + user.username + " username già esistente");
-                registerResponse.error = "Impossibile registrarsi: username già esistente";
+                registerResponse.error = "username già esistente";
             }
             else
             {
@@ -81,7 +95,7 @@ namespace newServerWF
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    registerResponse.error = "Impossibile registrarsi: problemi col server";
+                    registerResponse.error = e.Message;
                 }
             }
             return registerResponse;
@@ -90,9 +104,6 @@ namespace newServerWF
         {
             User user = loginRequest.user;
             Console.WriteLine("L'utente " + user.username + " sta tentando di autenticarsi.");
-            MyConsole.write("User: " + user.username);
-            MyConsole.write("Pass: " + user.password);
-            UserService userService = new UserServiceImpl();
             Login loginResponse = new Login(user);
             if (userService.checkIfCredentialsAreCorrected(user.username, user.password))
             {
@@ -102,40 +113,60 @@ namespace newServerWF
                 loginResponse.message = user.username + " autenticazione riuscita";
                 loginResponse.isLogged = true;
                 clientDir = serverDirRoot + user.username + @"\";
+                MyConsole.setClientLog(serverDirRoot + @"Log\" + clientUser.username + ".txt");
+                MyConsole.Log(clientUser.username + " logged");
                 isLogged = true;
             }
             else
             {
-                Console.WriteLine(user.username + ": impossibile autenticarsi");
-                loginResponse.error = user.username + ": impossibile autenticarsi";
+                loginResponse.error = "username e/o password errati";
             }
             return loginResponse;
-        } 
-        public CreateVersion createNewVersion(CreateVersion request)
+        }
+        public MonitorDir changeMonitorDir(MonitorDir request)
         {
-            VersionService versionService = new VersionServiceImpl();
-            FileSystemService fsService = new FileSystemServiceImpl();
+            clientUser.monitorDir = request.monitorDir;
             try
             {
-                request.version = versionService.saveVersion(request.version.dirTree, clientUser.username);
+                userService.updateUser(clientUser);
+                request.message = "MonitorDir modificata";
             }catch(Exception e)
             {
-                request.error = "Impossibile creare la versione: " + e.Message;
-                return request;
-            }
-            try{
-                request.elencoHash = fsService.getAllHashToBeingReceived(clientUser.username);
-                request.message = "Versione creata e lista degli hash ricevuti";
-            }catch (Exception e)
-            {
-                request.error = "La versione e' stata creata, ma la lista degli hash mancanti non e' stata ricevuta: " + e.Message;
+                request.error = e.Message;
             }
             return request;
         }
+        public MonitorDir getMonitorDir(MonitorDir request)
+        {
+            request.monitorDir = clientUser.monitorDir;
+            return request;
+        }
+        public CreateVersion createNewVersion(CreateVersion request)
+        {
+            try
+            {
+                List<int> idVersionList = versionService.getAllIdOfVersions(clientUser.username);
+                using(TransactionScope scope = new TransactionScope())
+                {
+                    if (idVersionList.Count > nOfMaxVersionToSaveForUser)
+                        versionService.deleteVersion(clientUser.username, idVersionList.ElementAt(0), clientDir);
+
+                    int idOpenVersion = versionService.getCurrentVersionID(clientUser.username);
+                    if (idOpenVersion != -1)
+                        versionService.closeVersion(clientUser.username, idOpenVersion);
+
+                    request.version = versionService.saveVersion(request.version.dirTree, clientUser.username);
+                    scope.Complete();
+                }
+                return request;
+            }catch(Exception e)
+            {
+                request.error = e.Message;
+                return request;
+            } 
+        }
         public UpdateVersion updateVersion(UpdateVersion request)
         {
-            VersionService versionService = new VersionServiceImpl();
-            FileSystemService fsService = new FileSystemServiceImpl();
             try
             {
                 int idVersion = versionService.getCurrentVersionID(clientUser.username);
@@ -144,68 +175,82 @@ namespace newServerWF
             }
             catch (Exception e)
             {
-                request.error = "impossibile aggiornare la versione";
+                request.error = e.Message;
                 Console.WriteLine("impossibile aggiornare la versione");
-                return request;
-            }
-            try
-            {
-                request.elencoHash = fsService.getAllHashToBeingReceived(clientUser.username);
-                request.message = "Versione aggiornata e lista degli hash ricevuti";
-            }
-            catch (Exception e)
-            {
-                request.error = "La versione e' stata aggiornata, ma la lista degli hash mancanti non e' stata ricevuta: " + e.Message;
             }
             return request;
         }
         public CloseVersion closeVersion(CloseVersion request)
         {
-            VersionService versionService = new VersionServiceImpl();
             try
             {
-                versionService.closeVersion(clientUser.username, request.version.idVersion);
+                versionService.closeVersion(clientUser.username, request.idVersion);
                 request.message = "versione chiusa";
             }
             catch (Exception e)
             {
-                request.error = "impossibile chiudere la versione";
+                request.error = e.Message;
                 Console.WriteLine("impossibile chiudere la versione");
             }
             return request;
         }
-        public RestoreVersion restoreVersion(RestoreVersion request)
+        public StoredVersions getIDofAllVersions(StoredVersions request){
+            try{
+                request.elencoID = versionService.getAllIdOfVersions(clientUser.username);
+            }catch(Exception e){
+                request.error = e.Message;
+            }
+            return request;
+        }
+        public GetVersion getVersion(GetVersion request)
         {
-            VersionService versionService = new VersionServiceImpl();
             try
             {
                 request.version = versionService.getVersion(clientUser.username, request.version.idVersion);
-                request.elencoFile = versionService.getAllFileIntoAlist(request.version);
                 request.message = "Versione recuperata";
             }
             catch (Exception e)
             {
-                request.error = "Impossibile recuperare la versione: " + e.Message;
+                request.error = e.Message;
             }
             return request;
         }
-        public StoredVersions sendStoredVersions(StoredVersions request)
+        public GetVersion getOpenVersion(GetVersion request)
         {
-            VersionService versionService = new VersionServiceImpl();
             try
             {
-                request.storedVersions = versionService.getAllVersionsOfaUser(clientUser.username);
-                request.message = "Versioni recuperate";
+                int idVersion = versionService.getCurrentVersionID(clientUser.username);
+                if (idVersion == -1)
+                {
+                    request.version = null;
+                    return request;
+                }
+                request.version = versionService.getVersion(clientUser.username, idVersion);
+                request.message = "Versione aperta recuperata";
+            }
+            catch (Exception e)
+            {
+                request.error = e.Message;
+            }
+            return request;
+        }
+        public HashRequest sendHashToBeingReceived(HashRequest request)
+        {
+            try
+            {
+                request.elencoHash = fsService.getAllHashToBeingReceived(clientUser.username);
+                request.message = "Lista degli hash mancanti creata";
             }
             catch(Exception e)
             {
-                request.error = "Impossibile recuperare le versioni";
+                request.error = e.Message;
             }
             return request;
         }
         public WrapFile handleRequestOfFile(File file)
         {
-            String pathSrc = clientDir + file.hash + file.extension;
+            //String pathSrc = clientDir + file.hash + file.extension;
+            String pathSrc = clientDir + file.hash;
             FileInfo fileinfo = new FileInfo(pathSrc);
             file.size = (int)fileinfo.Length;
             WrapFile wrapFile = new WrapFile(file, file.size, new FileStream(pathSrc, FileMode.Open, FileAccess.Read));
@@ -213,7 +258,8 @@ namespace newServerWF
         }
         public WrapFile initializeReceiptOfFile(File file)
         {
-            string pathDst = clientDir + file.hash + file.extension;
+            //string pathDst = clientDir + file.hash + file.extension;
+            string pathDst = clientDir + file.hash;
             WrapFile wrapFile = new WrapFile(file, -1, new FileStream(pathDst, FileMode.Create, FileAccess.Write));
             return wrapFile;
         }
@@ -221,7 +267,6 @@ namespace newServerWF
         {
             //Update the db
             File file = wrapFile.file;
-            FileSystemService fsService = new FileSystemServiceImpl();
             try
             {
                 fsService.setFileAsReceived(clientUser.username, file.hash);
@@ -235,7 +280,6 @@ namespace newServerWF
     
         public CheckFile checkFile(CheckFile request)
         {
-            FileSystemService fsService = new FileSystemServiceImpl();
             switch (request.operation)
             {
                 case "checkFile":
@@ -252,7 +296,7 @@ namespace newServerWF
 
                     }catch(Exception e){
                         request.message = "impossibile creare il file: " + e.Message;
-                        MyConsole.write("impossibile creare il file: " + e.Message);
+                        MyConsole.Write("impossibile creare il file: " + e.Message);
                     }
                     break;
                 case "updateFile":
@@ -265,7 +309,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile modificare il file: " + e.Message;
-                        MyConsole.write("impossibile modificare il file: " + e.Message);
+                        MyConsole.Write("impossibile modificare il file: " + e.Message);
                     }
                     break;
                 case "renameFile":
@@ -278,7 +322,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile rinominare il file: " + e.Message;
-                        MyConsole.write("impossibile rinominare il file: " + e.Message);
+                        MyConsole.Write("impossibile rinominare il file: " + e.Message);
                     }
                     break;
                 case "deleteFile":
@@ -290,7 +334,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile eliminare il file: " + e.Message;
-                        MyConsole.write("impossibile eliminare il file: " + e.Message);
+                        MyConsole.Write("impossibile eliminare il file: " + e.Message);
                     }
                     break;
                 case "checkDir":
@@ -309,7 +353,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile creare la directory: " + e.Message;
-                        MyConsole.write("impossibile creare la directory: " + e.Message);
+                        MyConsole.Write("impossibile creare la directory: " + e.Message);
                     }
                     break;
                 case "updateDir":
@@ -322,7 +366,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile aggiornare la directory: " + e.Message;
-                        MyConsole.write("impossibile aggiornare la directory: " + e.Message);
+                        MyConsole.Write("impossibile aggiornare la directory: " + e.Message);
                     }
                     break;
                 case "renameDir":
@@ -335,7 +379,7 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile rinominare la cartella: " + e.Message;
-                        MyConsole.write("impossibile rinominare la cartella: " + e.Message);
+                        MyConsole.Write("impossibile rinominare la cartella: " + e.Message);
                     }
                     break;
                 case "deleteDir":
@@ -347,12 +391,13 @@ namespace newServerWF
                     catch (Exception e)
                     {
                         request.message = "impossibile eliminare la cartella: " + e.Message;
-                        MyConsole.write("impossibile eliminare la cartella: " + e.Message);
+                        MyConsole.Write("impossibile eliminare la cartella: " + e.Message);
                     }
                     break;
 
             }
             return request;
         }
+    
     }
 }

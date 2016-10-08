@@ -8,15 +8,15 @@ namespace newServerWF
 {
     class CloseVersion : GenericRequest
     {
-        public Version version { get; set; }
+        public int idVersion { get; set; }
 
         public CloseVersion()
         {
         }
 
-        public CloseVersion(Version version)
+        public CloseVersion(int idVersion)
         {
-            this.version = version;
+            this.idVersion = idVersion;
         }
     }
 }

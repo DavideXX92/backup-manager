@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace newServerWF
 {
-    class CreateVersion : GenericRequest
+    class MonitorDir : GenericRequest
     {
-        public Version version { get; set; }
+        public string monitorDir { get; set; }
 
-        public CreateVersion()
+        public MonitorDir()
         {
         }
 
-        public CreateVersion(Version version)
+        public MonitorDir(string monitorDir)
         {
-            this.version = version;
+            this.monitorDir = monitorDir;
         }
     }
 }

@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HashRequest.cs" />
+    <Compile Include="MonitorDir.cs" />
     <Compile Include="SharedClasses\Operation.cs" />
     <Compile Include="SharedClasses\CheckFile.cs" />
     <Compile Include="Service\FileSystemService.cs" />
@@ -81,7 +83,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedClasses\Register.cs" />
     <Compile Include="Network\ServerTCP.cs" />
-    <Compile Include="SharedClasses\RestoreVersion.cs" />
+    <Compile Include="SharedClasses\GetVersion.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="Repository\UserDao.cs" />
     <Compile Include="Repository\UserDaoImpl.cs" />

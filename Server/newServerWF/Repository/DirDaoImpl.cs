@@ -11,7 +11,7 @@ namespace newServerWF
 {
     class DirDaoImpl : DirDao
     {
-        public int getMaxIdDir(int idUser, int idVersion)
+        private int getMaxIdDir(int idUser, int idVersion)
         {
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
@@ -24,16 +24,11 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idVersion", idVersion);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
+            int idDir = -1;
             dataReader.Read();
-            int idDir;
-            try
-            {
+            if (!dataReader.IsDBNull(0))
                 idDir = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idDir = -1;
-            }
+            
             dbConnect.CloseConnection();
             return idDir;
         }

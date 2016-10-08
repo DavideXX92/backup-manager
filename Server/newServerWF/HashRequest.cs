@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientDiProva
+namespace newServerWF
 {
-    class StoredVersions : GenericRequest
+    class HashRequest : GenericRequest
     {
-        public List<int> elencoID { get; set; }
+        public List<string> elencoHash { get; set; }
 
-        public StoredVersions()
+        public HashRequest()
         {
         }
 

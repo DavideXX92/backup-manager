@@ -10,7 +10,7 @@ namespace newServerWF
 {
     class HashDaoImpl : HashDao
     {
-        public int getMaxIdHash(int idUser) 
+        private int getMaxIdHash(int idUser) 
         {
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
@@ -22,16 +22,11 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idUser", idUser);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
+            int idHash = -1;
             dataReader.Read();
-            int idHash;
-            try
-            {
+            if (!dataReader.IsDBNull(0))
                 idHash = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idHash = -1;
-            }
+            
             dbConnect.CloseConnection();
             return idHash;
         }
@@ -64,6 +59,23 @@ namespace newServerWF
                 dbConnect.CloseConnection();
                 throw;
             }
+        }
+        public void deleteHash(string hash, int idUser)
+        {
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            string query = "DELETE FROM hash WHERE idUser=@idUser AND hash=@hash";
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+            cmd.Parameters.AddWithValue("@hash", hash);
+
+            cmd.ExecuteNonQuery();
+            dbConnect.CloseConnection();
         }
         public int checkIfHashExists(string hash, int idUser)
         {
@@ -151,6 +163,26 @@ namespace newServerWF
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
             cmd.CommandText = @"SELECT hash FROM hash WHERE idUser=@idUser AND received=0";
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            while (dataReader.Read())
+                elencoHash.Add(dataReader.GetString(dataReader.GetOrdinal("hash")));
+
+            dataReader.Close();
+            dbConnect.CloseConnection();
+            return elencoHash;
+        }
+        public List<string> getAllHashToRemove(int idUser)
+        {
+            List<string> elencoHash = new List<string>();
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = @"SELECT hash FROM hash WHERE idUser=@idUser AND counter=0 AND received=1";
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@idUser", idUser);
             MySqlDataReader dataReader = cmd.ExecuteReader();

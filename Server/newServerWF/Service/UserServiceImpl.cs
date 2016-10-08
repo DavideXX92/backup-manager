@@ -40,6 +40,10 @@ namespace newServerWF
                 throw;
             }
         }
+        public void updateUser(User user)
+        {
+            userDao.update(user);
+        }
         public bool checkIfCredentialsAreCorrected(string username, string password)
         {
             return userDao.checkIfCredentialsAreCorrected(username, password);

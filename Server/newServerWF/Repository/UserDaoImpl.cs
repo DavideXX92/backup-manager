@@ -113,6 +113,25 @@ namespace newServerWF
                 throw;
             }
         }
+        public void update(User user)
+        {
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            string query = "UPDATE user SET username=@username, password=@password, monitorDir=@monitorDir WHERE idUser=@idUser";
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@username", user.username);
+            cmd.Parameters.AddWithValue("@password", user.password);
+            cmd.Parameters.AddWithValue("@monitorDir", user.monitorDir);
+            cmd.Parameters.AddWithValue("@idUser", user.idUser);
+
+            cmd.ExecuteNonQuery();
+            dbConnect.CloseConnection();
+        }
         public bool checkIfCredentialsAreCorrected(string username, string password)
         {
             DBConnect dbConnect = new DBConnect();
@@ -147,16 +166,11 @@ namespace newServerWF
             cmd.Prepare();
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
+            int idUser = 0;
             dataReader.Read();
-            int idUser;
-            try
-            {
+            if (!dataReader.IsDBNull(0))
                 idUser = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idUser = 0;
-            }
+            
             dbConnect.CloseConnection();
             return idUser;
         }

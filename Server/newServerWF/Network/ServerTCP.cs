@@ -19,6 +19,7 @@ namespace newServerWF
         private int serverPort;
         private readonly object sync = new object();
         private List<HandleClient> hcList = new List<HandleClient>();
+        private string serverLogPath = @"c:\ServerDir\Log\serverLog.txt";
 
         private delegate HandleClient MyTaskWorkerDelegate();
 
@@ -30,7 +31,8 @@ namespace newServerWF
 
         public void Start(){
             serverIsRunning = true;
-            MyConsole.write("Server started");
+            MyConsole.setServerLog(serverLogPath);
+            MyConsole.Write("Server started");
             t = new Thread(() => loopClients()); // lambda function (parameters) => {istructions}
             t.Start();
         }
@@ -38,7 +40,7 @@ namespace newServerWF
         private void loopClients()
         {
             listener = new TcpListener(IPAddress.Any, serverPort); //Listen on all the network interface
-            MyConsole.write(Thread.CurrentThread.ManagedThreadId + " The server is running at port " + serverPort);
+            MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " The server is running at port " + serverPort);
             // Start Listening at the specified port
             listener.Start();
             while (serverIsRunning)
@@ -46,12 +48,12 @@ namespace newServerWF
                 try
                 {
                     // wait for client connection
-                    MyConsole.write(Thread.CurrentThread.ManagedThreadId + " Waiting for a connection...");
+                    MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Waiting for a connection...");
                     TcpClient newClient = listener.AcceptTcpClient();
                     Monitor.Enter(sync);
                     if (serverIsRunning)
                     {
-                        MyConsole.write(Thread.CurrentThread.ManagedThreadId + " Connection accepted from " + newClient.Client.RemoteEndPoint);
+                        MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Connection accepted from " + newClient.Client.RemoteEndPoint);
 
                         // client found.
                         // create a class to handle communication
@@ -64,7 +66,7 @@ namespace newServerWF
                 }
                 catch (Exception x)
                 {
-                    MyConsole.write(Thread.CurrentThread.ManagedThreadId + " Server stopped"); // because i force listener.stop();
+                    MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Server stopped"); // because i force listener.stop();
                 } 
             }
         }

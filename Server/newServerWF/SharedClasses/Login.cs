@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace newServerWF
 {
-    class Login
+    class Login : GenericRequest
     {
         public User user { get; set; }
         public bool isLogged { get; set; }
-        public string message { get; set; }
-        public string error { get; set; }
 
         public Login()
         {

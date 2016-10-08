@@ -8,7 +8,6 @@ namespace newServerWF
 {
     interface DirDao
     {
-        int getMaxIdDir(int idUser, int idVersion);
         int checkIfPathExists(int idUser, int idVersion, string path);
         int createDirFromPath(int idUser, int idVersion, string path);
         int saveDirectory(string name, int idParent, int idUser, int idVersion, DateTime creationTime, DateTime lastWriteTime);

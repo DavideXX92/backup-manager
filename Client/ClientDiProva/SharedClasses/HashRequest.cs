@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace ClientDiProva
 {
-    class StoredVersions : GenericRequest
+    class HashRequest : GenericRequest
     {
-        public List<int> elencoID { get; set; }
+        public List<string> elencoHash { get; set; }
 
-        public StoredVersions()
+        public HashRequest()
         {
         }
-
     }
 }

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace newServerWF
 {
-    class Register
+    class Register : GenericRequest
     {
         public User user { get; set; }
         public bool isRegistred { get; set; }
-        public string message { get; set; }
-        public string error { get; set; }
 
         public Register()
         {

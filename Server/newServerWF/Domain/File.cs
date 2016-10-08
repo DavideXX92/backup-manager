@@ -11,6 +11,8 @@ namespace newServerWF
     {
         public string name { get; set; }
         public string path { get; set; }
+        public string absolutePath { get; set; }
+        public string relativePath { get; set; }
         public Dir parentDir { get; set; }
         public int size { get; set; }
         public string hash { get; set; }

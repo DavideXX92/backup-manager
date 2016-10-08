@@ -133,6 +133,35 @@ namespace newServerWF
                 throw e;
             }    
         }
+        public int cleaner(string serverDirRoot, string username)
+        {
+            try
+            {
+                int count = 0;
+                int idUser = userService.getIdByUsername(username);
+                List<string> hashToRemove = hashDao.getAllHashToRemove(idUser);
+                foreach (string hash in hashToRemove)
+                {
+                    string pathFile = serverDirRoot + hash;
+                    try
+                    {
+                        System.IO.File.Delete(pathFile);
+                        hashDao.deleteHash(hash, idUser);
+                        count++;
+                        Console.WriteLine("Cleaner: eliminato il file: " + pathFile);
+                    }catch(Exception e)
+                    {
+                        Console.WriteLine("Cleaner: impossibile eliminare il file: " + pathFile);
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                return count;
+            }catch(Exception e)
+            {
+                Console.WriteLine("impossibile eseguire il cleaner: " + e.Message);
+                throw e;
+            }
+        }
 
         /*DIR OPERATIONS*/
         public bool checkIfDirExists(string username, int version, string path)

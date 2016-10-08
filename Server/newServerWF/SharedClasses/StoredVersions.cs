@@ -8,11 +8,11 @@ namespace newServerWF
 {
     class StoredVersions : GenericRequest
     {
-        public List<Version> storedVersions { get; set; }
+        public List<int> elencoID { get; set; }
 
         public StoredVersions()
         {
-            storedVersions = new List<Version>();
         }
+
     }
 }

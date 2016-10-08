@@ -10,7 +10,7 @@ namespace newServerWF
 {
     class VersionDaoImpl : VersionDao
     {
-        public int getMaxIdVersion(int idUser)
+        private int getMaxIdVersion(int idUser)
         {
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
@@ -22,20 +22,15 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idUser", idUser);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
+            int idVersion = 0;
             dataReader.Read();
-            int idVersion;
-            try
-            {
+            if (!dataReader.IsDBNull(0))
                 idVersion = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idVersion = 0;
-            }
+
             dbConnect.CloseConnection();
             return idVersion;
         }
-        public int addVersion(int idUser)
+        public int addVersion(int idUser, DateTime dateCreation)
         {
             int idVersion = getMaxIdVersion(idUser) + 1;
             DBConnect dbConnect = new DBConnect();
@@ -49,7 +44,7 @@ namespace newServerWF
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@idUser", idUser);
             cmd.Parameters.AddWithValue("@idVersion", idVersion);
-            cmd.Parameters.AddWithValue("@dateCreation", DateTime.Now);
+            cmd.Parameters.AddWithValue("@dateCreation", dateCreation);
             try
             {
                 cmd.ExecuteNonQuery();
@@ -68,7 +63,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "UPDATE version SET dateClosed=@dateClosed WHERE idUser=@idUser AND idVersion=@idVersion";
+            string query = "UPDATE version SET dateClosed=@dateClosed WHERE idVersion=@idVersion AND idUser=@idUser";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
@@ -89,6 +84,41 @@ namespace newServerWF
                 throw;
             }
         }
+        public void deleteVersion(int idUser, int idVersion)
+        {
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            string query = "DELETE FROM version WHERE idVersion=@idVersion AND idUser=@idUser";
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            cmd.Prepare();          
+            cmd.Parameters.AddWithValue("@idVersion", idVersion);
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+
+            cmd.ExecuteNonQuery();
+            dbConnect.CloseConnection();
+        }
+        public void refreshLastUpdateDate(int idUser, int idVersion)
+        {
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            string query = "UPDATE version SET lastUpdate=@lastUpdate WHERE idUser=@idUser AND idVersion=@idVersion";
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+            cmd.Parameters.AddWithValue("@idVersion", idVersion);
+
+            cmd.ExecuteNonQuery();
+            dbConnect.CloseConnection();
+        }
         public Version getVersionInfo(int idUser, int idVersion)
         {
             DBConnect dbConnect = new DBConnect();
@@ -102,18 +132,14 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idVersion", idVersion);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
-            dataReader.Read();
-            Version version;
-            try
+            Version version = null;
+            if (dataReader.HasRows)
             {
+                dataReader.Read();
                 if (dataReader.IsDBNull(1)) //if dataClosed is null
                     version = new Version(idVersion, dataReader.GetDateTime("dateCreation"));
                 else
                     version = new Version(idVersion, dataReader.GetDateTime("dateCreation"), dataReader.GetDateTime("dateClosed"));
-            }
-            catch (SqlNullValueException ex)
-            {
-                version = null;
             }
             dbConnect.CloseConnection();
             return version;
@@ -126,7 +152,7 @@ namespace newServerWF
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = @"SELECT idVersion FROM version WHERE idUser=@idUser";                   
+            cmd.CommandText = @"SELECT idVersion FROM version WHERE idUser=@idUser ORDER BY idVersion";                   
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@idUser", idUser);
             MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -150,15 +176,11 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idUser", idUser);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
-            dataReader.Read();
-            int idVersion;
-            try
+            int idVersion = -1;
+            if (dataReader.HasRows)
             {
+                dataReader.Read();
                 idVersion = dataReader.GetInt32(0);
-            }
-            catch (SqlNullValueException ex)
-            {
-                idVersion = 0;
             }
             dbConnect.CloseConnection();
             return idVersion;

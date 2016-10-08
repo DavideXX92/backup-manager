@@ -13,6 +13,7 @@ namespace ClientDiProva
         public string name { get; set; }
         public string path { get; set; }
         public string absolutePath {get; set;}
+        public string relativePath { get; set; }
         public Dir parentDir { get; set; }
         public int size { get; set; }
         public string hash { get; set; }
@@ -44,7 +45,7 @@ namespace ClientDiProva
             }
         }
 
-        public File(string filename, Dir parentDir)
+        public File(string filename, Dir parentDir, string monitorDir)
         {
             try
             {
@@ -52,6 +53,7 @@ namespace ClientDiProva
                 this.name = fileinfo.Name;
                 this.path = parentDir.path + @"\" + this.name;
                 this.absolutePath = path;
+                this.relativePath = getPathFromMonitorDir(absolutePath, monitorDir);
                 this.parentDir = parentDir;
                 this.size = (int)fileinfo.Length;
                 this.hash = getHash(filename);
@@ -88,5 +90,6 @@ namespace ClientDiProva
             string monitorDirName = monitorDirPath.Substring(monitorDirPath.LastIndexOf(@"\"));
             return monitorDirName + path.Substring(monitorDirPath.Length);
         }
+
     }
 }

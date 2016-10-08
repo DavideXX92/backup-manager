@@ -40,5 +40,11 @@ namespace newServerWF
             this.dateCreation = dateCreation;
             this.dateClosed = dateClosed;
         }
+        public Version(int version, Dir dirTree, DateTime dateCreation)
+        {
+            this.idVersion = version;
+            this.dirTree = dirTree;
+            this.dateCreation = dateCreation;
+        }
     }
 }
