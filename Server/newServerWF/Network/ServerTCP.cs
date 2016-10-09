@@ -18,10 +18,10 @@ namespace newServerWF
         private TcpListener listener;
         private int serverPort;
         private readonly object sync = new object();
-        private List<HandleClient> hcList = new List<HandleClient>();
+        private List<ServerController> scList = new List<ServerController>();
         private string serverLogPath = @"c:\ServerDir\Log\serverLog.txt";
 
-        private delegate HandleClient MyTaskWorkerDelegate();
+        private delegate ServerController MyTaskWorkerDelegate();
 
         public ServerTCP(int serverPort)
         {
@@ -57,9 +57,9 @@ namespace newServerWF
 
                         // client found.
                         // create a class to handle communication
-                        HandleClient hc = new HandleClientImpl(newClient);
-                        hcList.Add(hc);
-                        MyTaskWorkerDelegate worker = new MyTaskWorkerDelegate(hc.startLoop);
+                        ServerController serverController = new ServerControllerImpl(newClient);
+                        scList.Add(serverController);
+                        MyTaskWorkerDelegate worker = new MyTaskWorkerDelegate(serverController.startLoop);
                         IAsyncResult result = worker.BeginInvoke(new AsyncCallback(clearClient), worker);
                     }
                     Monitor.Exit(sync);
@@ -74,16 +74,16 @@ namespace newServerWF
         private void clearClient(IAsyncResult result)
         {
             MyTaskWorkerDelegate d = (MyTaskWorkerDelegate)result.AsyncState;
-            HandleClient client = d.EndInvoke(result);
-            hcList.Remove(client);
+            ServerController client = d.EndInvoke(result);
+            scList.Remove(client);
         }
        
         public void Stop(){
             Monitor.Enter(sync); 
             serverIsRunning = false;
             listener.Stop();
-            foreach (HandleClient hc in hcList)
-                hc.stop();
+            foreach (ServerController serverController in scList)
+                serverController.stop();
             Monitor.Exit(sync); 
         }
 

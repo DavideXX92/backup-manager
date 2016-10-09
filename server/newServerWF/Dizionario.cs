@@ -11,37 +11,34 @@ namespace newServerWF
     class Dizionario
     {
         private Dictionary<string, Delegate> dict;
-        private HandleClient handleClient; //Class with method to invoke
+        private ServerController serverController; //Class with method to invoke
         public delegate Object InvokeFunc(string code, Object obj);
         public InvokeFunc invokeFunc; //Function to pass to HandlePackets
 
-        public Dizionario(HandleClient handleClient)
+        public Dizionario(ServerController serverController)
         {
-            this.handleClient = handleClient;
+            this.serverController = serverController;
             invokeFunc = invokeFunction;
             dict = new Dictionary<string, Delegate>();
-            //dict["000"] = new Action(handleClient.closeConnectionWithTheClient);
-            dict["017"] = new Func<GenericRequest, GenericRequest>(handleClient.helloMessage);
-            dict["000"] = new Func<GenericRequest, GenericRequest>(handleClient.closeConnectionWithTheClient);
-            dict["001"] = new Func<File, WrapFile>(handleClient.handleRequestOfFile);
-            dict["002"] = new Func<File, WrapFile>(handleClient.initializeReceiptOfFile);
-            dict["003"] = new Func<WrapFile, WrapFile>(handleClient.fileReceived);
-            dict["004"] = new Func<Register, Register>(handleClient.handleRegistration);
-            dict["005"] = new Func<Login, Login>(handleClient.handleLogin);
-            dict["012"] = new Func<MonitorDir, MonitorDir>(handleClient.changeMonitorDir); 
-            dict["015"] = new Func<MonitorDir, MonitorDir>(handleClient.getMonitorDir);
-            dict["006"] = new Func<CreateVersion, CreateVersion>(handleClient.createNewVersion);
-            dict["007"] = new Func<UpdateVersion, UpdateVersion>(handleClient.updateVersion);
-            dict["009"] = new Func<CloseVersion, CloseVersion>(handleClient.closeVersion);
-            dict["010"] = new Func<GetVersion, GetVersion>(handleClient.getVersion);
-            dict["016"] = new Func<GetVersion, GetVersion>(handleClient.getOpenVersion);
-            dict["011"] = new Func<StoredVersions, StoredVersions>(handleClient.getIDofAllVersions);
-            dict["014"] = new Func<HashRequest, HashRequest>(handleClient.sendHashToBeingReceived);
-            //dict["006"] = new Func<List<File>, List<File>>(handleClient.handleSynchronizeRequest);
-            //dict["008"] = new Func<GenericReq, GenericReq>(handleClient.completeSynchronization);
-            
-            
-            dict["013"] = new Func<CheckFile, CheckFile>(handleClient.checkFile);
+            //dict["000"] = new Action(serverController.closeConnectionWithTheClient);
+            dict["017"] = new Func<GenericRequest, GenericRequest>(serverController.helloMessage);
+            dict["000"] = new Func<GenericRequest, GenericRequest>(serverController.closeConnectionWithTheClient);
+            dict["001"] = new Func<File, WrapFile>(serverController.handleRequestOfFile);
+            dict["002"] = new Func<File, WrapFile>(serverController.initializeReceiptOfFile);
+            dict["003"] = new Func<WrapFile, WrapFile>(serverController.fileReceived);
+            dict["004"] = new Func<Register, Register>(serverController.handleRegistration);
+            dict["005"] = new Func<Login, Login>(serverController.handleLogin);
+            dict["012"] = new Func<MonitorDir, MonitorDir>(serverController.changeMonitorDir); 
+            dict["015"] = new Func<MonitorDir, MonitorDir>(serverController.getMonitorDir);
+            dict["006"] = new Func<CreateVersion, CreateVersion>(serverController.createNewVersion);
+            dict["007"] = new Func<UpdateVersion, UpdateVersion>(serverController.updateVersion);
+            dict["009"] = new Func<CloseVersion, CloseVersion>(serverController.closeVersion);
+            dict["010"] = new Func<GetVersion, GetVersion>(serverController.getVersion);
+            dict["016"] = new Func<GetVersion, GetVersion>(serverController.getOpenVersion);
+            dict["011"] = new Func<StoredVersions, StoredVersions>(serverController.getIDofAllVersions);
+            dict["014"] = new Func<HashRequest, HashRequest>(serverController.sendHashToBeingReceived);
+                        
+            dict["013"] = new Func<CheckFile, CheckFile>(serverController.checkFile);
         }
 
         public Object invokeFunction(string str, Object obj)

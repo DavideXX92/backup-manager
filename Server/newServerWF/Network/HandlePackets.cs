@@ -110,7 +110,6 @@ namespace newServerWF
             {
                 //Receive size
                 byte[] lengthBytes = new byte[sizeof(int)];
-                //int bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
                 int bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
                 int length = BitConverter.ToInt32(lengthBytes, 0);
 
@@ -128,7 +127,6 @@ namespace newServerWF
                     else
                         bytesToRead = bytesReamining;
 
-                    //bytesRead = netStream.Read(rBuffer, 0, bytesToRead);
                     bytesRead = myReceive(netStream, rBuffer, 0, bytesToRead);
                     if (bytesRead < 0)
                         break;
@@ -150,12 +148,9 @@ namespace newServerWF
         {
             string receive;
             byte[] codeBytes = new byte[CODELENGTH];
-            //wBuffer = ASCIIEncoding.ASCII.GetBytes("Hello");
-            //netStream.Write(wBuffer, 0, wBuffer.Length);
 
             while (client.Connected && isListen)
             {
-                //bytesRead = netStream.Read(codeBytes, 0, codeBytes.Length);
                 bytesRead = myReceive(netStream, codeBytes, 0, codeBytes.Length);
                 if (bytesRead <= 0)
                 {
@@ -199,9 +194,6 @@ namespace newServerWF
                     
 
                 }
-                /*wBuffer = ASCIIEncoding.ASCII.GetBytes("HelloAAA");
-                netStream.Write(wBuffer, 0, wBuffer.Length);
-                Thread.Sleep(1000);*/
             }
             wBuffer = ASCIIEncoding.ASCII.GetBytes("Connection closed by the server");
             netStream.Write(wBuffer, 0, wBuffer.Length);
@@ -215,15 +207,12 @@ namespace newServerWF
             byte[] lengthBytes = new byte[sizeof(int)];
             Object obj;
 
-            //bytesRead = netStream.Read(lengthBytes, 0, lengthBytes.Length);
             bytesRead = myReceive(netStream, lengthBytes, 0, lengthBytes.Length);
             length = BitConverter.ToInt32(lengthBytes, 0);
 
             if (length != 0)
-            {
                 obj = receiveObject(length);
-            }
-            else
+            else    
                 obj = null;
 
             return obj;
@@ -245,7 +234,6 @@ namespace newServerWF
                 else
                     bytesToRead = bytesReamining;
 
-                //bytesRead = netStream.Read(rBuffer, bytesReceived, bytesToRead);
                 bytesRead = myReceive(netStream, rBuffer, bytesReceived, bytesToRead);
                 if (bytesRead < 0)
                     break;

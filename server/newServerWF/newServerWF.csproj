@@ -57,8 +57,8 @@
     <Compile Include="Service\FileSystemServiceImpl.cs" />
     <Compile Include="SharedClasses\CloseVersion.cs" />
     <Compile Include="Configuration\DBConnect.cs" />
-    <Compile Include="Controller\HandleClient.cs" />
-    <Compile Include="Controller\HandleClientImpl.cs" />
+    <Compile Include="Controller\ServerController.cs" />
+    <Compile Include="Controller\ServerControllerImpl.cs" />
     <Compile Include="Repository\DirDaoImpl.cs" />
     <Compile Include="Repository\HashDaoImpl.cs" />
     <Compile Include="Repository\HashDao.cs" />

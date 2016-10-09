@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace newServerWF
 {
-    interface HandleClient
+    interface ServerController
     {
         //Funzioni che piò eseguire il server una volta stabilita la connessione con il client
         
-        HandleClient startLoop();
+        ServerController startLoop();
         void stop();
 
         GenericRequest helloMessage(GenericRequest request);

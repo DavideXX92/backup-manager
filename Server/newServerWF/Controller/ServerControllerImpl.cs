@@ -9,7 +9,7 @@ using System.Transactions;
 
 namespace newServerWF
 {
-    class HandleClientImpl : HandleClient
+    class ServerControllerImpl : ServerController
     {
         private const int nOfMaxVersionToSaveForUser = 3;
         private const string serverDirRoot = @"c:\ServerDir\";
@@ -26,7 +26,7 @@ namespace newServerWF
         private bool isLogged;
         private string clientDir;
 
-        public HandleClientImpl(TcpClient client)
+        public ServerControllerImpl(TcpClient client)
         {
             this.client = client;
             this.isLogged = false;
@@ -38,7 +38,7 @@ namespace newServerWF
             this.versionService = new VersionServiceImpl();
         }
 
-        public HandleClient startLoop()
+        public ServerController startLoop()
         {
             try
             {
