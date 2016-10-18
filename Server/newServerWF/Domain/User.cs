@@ -11,19 +11,18 @@ namespace newServerWF
         public int idUser { get; set; }
         public string username { get; set; }
         public string password { get; set; }
-        public string monitorDir { get; set; }
+        public List<string> monitorDir { get; set; }
         public bool isLogged { get; set; }
 
         public User()
         {
         }
 
-        public User(int idUser, string username, string password, string monitorDir)
+        public User(int idUser, string username, string password)
         {
             this.idUser = idUser;
             this.username = username;
             this.password = password;
-            this.monitorDir = monitorDir;
             this.isLogged = false;
         }
 
@@ -32,10 +31,17 @@ namespace newServerWF
             this.idUser = -1;
             this.username = username;
             this.password = password;
-            this.monitorDir = null;
             this.isLogged = false;
         }
 
+        public void changeMonitorDir(string oldPath, string newPath)
+        {
+            if (monitorDir.Contains(oldPath))
+            {
+                int index = monitorDir.IndexOf(oldPath);
+                monitorDir[index] = newPath;
+            }
+        }
     }
 
 }

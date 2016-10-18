@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HashRequest.cs" />
-    <Compile Include="MonitorDir.cs" />
+    <Compile Include="SharedClasses\MonitorDir.cs" />
+    <Compile Include="Repository\MonitorDirDao.cs" />
+    <Compile Include="Repository\MonitorDirDaoImpl.cs" />
     <Compile Include="SharedClasses\Operation.cs" />
     <Compile Include="SharedClasses\CheckFile.cs" />
     <Compile Include="Service\FileSystemService.cs" />

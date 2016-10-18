@@ -9,10 +9,12 @@ namespace newServerWF
     class UserServiceImpl : UserService
     {
         private UserDao userDao;
+        private MonitorDirDao monitorDirDao;
 
         public UserServiceImpl()
         {
             this.userDao = new UserDaoImpl();
+            this.monitorDirDao = new MonitorDirDaoImpl();
         }
 
         public int getIdByUsername(string username)
@@ -24,8 +26,11 @@ namespace newServerWF
         }
         public User getUser(string username)
         {
-            if (userDao.exists(username))
-                return userDao.findOne(username);
+            if (userDao.exists(username)){
+                User user = userDao.findOne(username);
+                user.monitorDir = monitorDirDao.getMonitorDirsByIdUser(user.idUser);
+                return user;
+            }
             else
                 throw new Exception("username not found");
         }
@@ -51,6 +56,33 @@ namespace newServerWF
         public bool checkIfUsernameExists(string username)
         {
             return userDao.exists(username);
+        }
+        public void addMonitorDir(string username, string path)
+        {
+            int idUser = userDao.getIdByUsername(username);
+            try
+            {
+                monitorDirDao.addMonitorDir(path, idUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Impossibile aggiungere la monitorDir");
+                throw;
+            }
+            
+        }
+        public void changeMonitorDir(string username, string oldPath, string newPath)
+        {
+            int idUser = userDao.getIdByUsername(username);
+            try
+            {
+                monitorDirDao.changeMonitorDir(oldPath, newPath, idUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Impossibile modificare la monitorDir");
+                throw;
+            }
         }
     }
 }

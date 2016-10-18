@@ -21,6 +21,7 @@ namespace newServerWF
         WrapFile fileReceived(WrapFile wrapFile);
         Register handleRegistration(Register request);
         Login handleLogin(Login loginRequest);
+        MonitorDir addMonitorDir(MonitorDir request);
         MonitorDir changeMonitorDir(MonitorDir request);
         MonitorDir getMonitorDir(MonitorDir request);
         CreateVersion createNewVersion(CreateVersion request);

@@ -14,5 +14,7 @@ namespace newServerWF
         void updateUser(User user);
         bool checkIfCredentialsAreCorrected(string username, string password);
         bool checkIfUsernameExists(string username);
+        void addMonitorDir(string username, string path);
+        void changeMonitorDir(string username, string oldPath, string newPath);
     }
 }

@@ -60,7 +60,7 @@ namespace newServerWF
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "SELECT idUser, username, password, monitorDir FROM user WHERE username=@username";
+            cmd.CommandText = "SELECT idUser, username, password FROM user WHERE username=@username";
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@username", username);
             MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -75,11 +75,11 @@ namespace newServerWF
 
                 user = new User(dataReader.GetInt32(dataReader.GetOrdinal("idUser")),
                                 dataReader.GetString(dataReader.GetOrdinal("username")),
-                                dataReader.GetString(dataReader.GetOrdinal("password")),
-                                monitorDir
+                                dataReader.GetString(dataReader.GetOrdinal("password"))
                                 );
             }
             dbConnect.CloseConnection();
+
             return user;
            
         }
@@ -89,7 +89,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "INSERT INTO user(idUser, username, password, monitorDir) VALUES(@idUser, @username, @password, @monitorDir)";
+            string query = "INSERT INTO user(idUser, username, password) VALUES(@idUser, @username, @password)";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
@@ -98,7 +98,6 @@ namespace newServerWF
             cmd.Parameters.AddWithValue("@idUser", idUser);
             cmd.Parameters.AddWithValue("@username", user.username);
             cmd.Parameters.AddWithValue("@password", user.password);
-            cmd.Parameters.AddWithValue("@monitorDir", user.monitorDir);
             try
             {
                 cmd.ExecuteNonQuery();
@@ -118,7 +117,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "UPDATE user SET username=@username, password=@password, monitorDir=@monitorDir WHERE idUser=@idUser";
+            string query = "UPDATE user SET username=@username, password=@password WHERE idUser=@idUser";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
@@ -126,7 +125,6 @@ namespace newServerWF
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@username", user.username);
             cmd.Parameters.AddWithValue("@password", user.password);
-            cmd.Parameters.AddWithValue("@monitorDir", user.monitorDir);
             cmd.Parameters.AddWithValue("@idUser", user.idUser);
 
             cmd.ExecuteNonQuery();
