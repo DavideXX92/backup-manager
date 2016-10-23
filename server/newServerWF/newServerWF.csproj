@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HashRequest.cs" />
+    <Compile Include="SharedClasses\HashRequest.cs" />
     <Compile Include="SharedClasses\MonitorDir.cs" />
     <Compile Include="Repository\MonitorDirDao.cs" />
     <Compile Include="Repository\MonitorDirDaoImpl.cs" />

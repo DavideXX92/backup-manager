@@ -14,7 +14,5 @@ namespace newServerWF
         User save(User user);
         void update(User user);
         bool checkIfCredentialsAreCorrected(string username, string password);
-        
-        
     }
 }

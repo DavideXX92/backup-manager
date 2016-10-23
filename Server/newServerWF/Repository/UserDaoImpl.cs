@@ -117,7 +117,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "UPDATE user SET username=@username, password=@password WHERE idUser=@idUser";
+            string query = "UPDATE user SET username=@username, password=@password, isLogged=@isLogged WHERE idUser=@idUser";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
@@ -125,6 +125,7 @@ namespace newServerWF
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@username", user.username);
             cmd.Parameters.AddWithValue("@password", user.password);
+            cmd.Parameters.AddWithValue("@isLogged", user.isLogged);
             cmd.Parameters.AddWithValue("@idUser", user.idUser);
 
             cmd.ExecuteNonQuery();

@@ -69,7 +69,19 @@ namespace newServerWF
                 Console.WriteLine("Impossibile aggiungere la monitorDir");
                 throw;
             }
-            
+        }
+        public void deleteMonitorDir(string username, string path)
+        {
+            int idUser = userDao.getIdByUsername(username);
+            try
+            {
+                monitorDirDao.deleteMonitorDir(path, idUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Impossibile eliminare la monitorDir");
+                throw;
+            }
         }
         public void changeMonitorDir(string username, string oldPath, string newPath)
         {

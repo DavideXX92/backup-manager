@@ -16,9 +16,6 @@ namespace newServerWF
 
         GenericRequest helloMessage(GenericRequest request);
         GenericRequest closeConnectionWithTheClient(GenericRequest request);
-        WrapFile handleRequestOfFile(File file);
-        WrapFile initializeReceiptOfFile(File file);
-        WrapFile fileReceived(WrapFile wrapFile);
         Register handleRegistration(Register request);
         Login handleLogin(Login loginRequest);
         MonitorDir addMonitorDir(MonitorDir request);
@@ -30,7 +27,11 @@ namespace newServerWF
         StoredVersions getIDofAllVersions(StoredVersions request);
         GetVersion getVersion(GetVersion request);
         GetVersion getOpenVersion(GetVersion request);
+        GenericRequest deleteUserRepository(GenericRequest request);
         HashRequest sendHashToBeingReceived(HashRequest request);
+        WrapFile handleRequestOfFile(File file);
+        WrapFile initializeReceiptOfFile(File file);
+        WrapFile fileReceived(WrapFile wrapFile);
 
         CheckFile checkFile(CheckFile request);
     }

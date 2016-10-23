@@ -23,13 +23,11 @@ namespace newServerWF
         private Dizionario dizionario; //Class to associate messages with functions
 
         private User clientUser;
-        private bool isLogged;
         private string clientDir;
 
         public ServerControllerImpl(TcpClient client)
         {
             this.client = client;
-            this.isLogged = false;
             this.clientUser = null;
             this.clientDir = null;
             this.dizionario = new Dizionario(this);
@@ -65,6 +63,8 @@ namespace newServerWF
         {
             try
             {
+                clientUser.isLogged = false;
+                userService.updateUser(clientUser);
                 clientConn.stopListen();
                 request.message = "Client disconnesso correttamente";
                 return request;
@@ -108,14 +108,22 @@ namespace newServerWF
             if (userService.checkIfCredentialsAreCorrected(user.username, user.password))
             {
                 clientUser = userService.getUser(user.username);
+                clientUser.isLogged = true;
+                try
+                {
+                    userService.updateUser(user);
+                }
+                catch (Exception e)
+                {
+                    loginResponse.error = "problema di comunicazione col database";
+                    return loginResponse;
+                }  
                 Console.WriteLine(user.username + ": autenticazione riuscita");
                 loginResponse.user = clientUser;
                 loginResponse.message = user.username + " autenticazione riuscita";
-                loginResponse.isLogged = true;
                 clientDir = serverDirRoot + user.username + @"\";
                 MyConsole.setClientLog(serverDirRoot + @"Log\" + clientUser.username + ".txt");
                 MyConsole.Log(clientUser.username + " logged");
-                isLogged = true;
             }
             else
             {
@@ -247,6 +255,28 @@ namespace newServerWF
                 request.error = e.Message;
             }
             return request;
+        }
+        public GenericRequest deleteUserRepository(GenericRequest request)
+        {
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    foreach (string monitorDir in clientUser.monitorDir)
+                        userService.deleteMonitorDir(clientUser.username, monitorDir);
+                    List<int> elencoID = versionService.getAllIdOfVersions(clientUser.username);
+                    foreach (int idVersion in elencoID)
+                        versionService.deleteVersion(clientUser.username, idVersion, clientDir);
+                    scope.Complete();
+                }
+                clientUser = userService.getUser(clientUser.username);
+                return request;
+            }
+            catch (Exception e)
+            {
+                request.error = e.Message;
+                return request;
+            }
         }
         public HashRequest sendHashToBeingReceived(HashRequest request)
         {

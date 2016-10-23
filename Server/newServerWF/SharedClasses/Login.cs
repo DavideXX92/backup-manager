@@ -9,7 +9,6 @@ namespace newServerWF
     class Login : GenericRequest
     {
         public User user { get; set; }
-        public bool isLogged { get; set; }
 
         public Login()
         {
@@ -18,7 +17,6 @@ namespace newServerWF
         public Login(User user)
         {
             this.user = user;
-            isLogged = false;
         }
     }
 }

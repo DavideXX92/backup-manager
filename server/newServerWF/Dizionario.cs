@@ -36,6 +36,7 @@ namespace newServerWF
             dict["009"] = new Func<CloseVersion, CloseVersion>(serverController.closeVersion);
             dict["010"] = new Func<GetVersion, GetVersion>(serverController.getVersion);
             dict["016"] = new Func<GetVersion, GetVersion>(serverController.getOpenVersion);
+            dict["019"] = new Func<GenericRequest, GenericRequest>(serverController.deleteUserRepository);
             dict["011"] = new Func<StoredVersions, StoredVersions>(serverController.getIDofAllVersions);
             dict["014"] = new Func<HashRequest, HashRequest>(serverController.sendHashToBeingReceived);
                         
