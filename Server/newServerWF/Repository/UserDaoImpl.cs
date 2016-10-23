@@ -60,22 +60,19 @@ namespace newServerWF
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "SELECT idUser, username, password FROM user WHERE username=@username";
+            cmd.CommandText = "SELECT idUser, username, password, isLogged FROM user WHERE username=@username";
             cmd.Prepare();
             cmd.Parameters.AddWithValue("@username", username);
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
             dataReader.Read();
             User user = null;
-            string monitorDir = null;
             if (dataReader.HasRows)
             {
-                if (!dataReader.IsDBNull(3)) //if monitorDir is not null
-                    monitorDir = dataReader.GetString(dataReader.GetOrdinal("monitorDir"));
-
                 user = new User(dataReader.GetInt32(dataReader.GetOrdinal("idUser")),
                                 dataReader.GetString(dataReader.GetOrdinal("username")),
-                                dataReader.GetString(dataReader.GetOrdinal("password"))
+                                dataReader.GetString(dataReader.GetOrdinal("password")),
+                                dataReader.GetBoolean(dataReader.GetOrdinal("isLogged"))
                                 );
             }
             dbConnect.CloseConnection();
@@ -89,7 +86,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "INSERT INTO user(idUser, username, password) VALUES(@idUser, @username, @password)";
+            string query = "INSERT INTO user(idUser, username, password, isLogged) VALUES(@idUser, @username, @password, NULL)";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;

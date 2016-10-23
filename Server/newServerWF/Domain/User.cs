@@ -18,12 +18,12 @@ namespace newServerWF
         {
         }
 
-        public User(int idUser, string username, string password)
+        public User(int idUser, string username, string password, bool isLogged)
         {
             this.idUser = idUser;
             this.username = username;
             this.password = password;
-            this.isLogged = false;
+            this.isLogged = isLogged;
         }
 
         public User(string username, string password)
