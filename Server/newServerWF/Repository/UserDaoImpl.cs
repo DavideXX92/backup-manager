@@ -86,7 +86,7 @@ namespace newServerWF
             DBConnect dbConnect = new DBConnect();
             MySqlConnection conn = dbConnect.OpenConnection();
 
-            string query = "INSERT INTO user(idUser, username, password, isLogged) VALUES(@idUser, @username, @password, NULL)";
+            string query = "INSERT INTO user(idUser, username, password, isLogged) VALUES(@idUser, @username, @password, 0)";
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conn;

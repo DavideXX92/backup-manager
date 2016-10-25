@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,6 +94,17 @@ namespace newServerWF
             catch (Exception e)
             {
                 Console.WriteLine("Impossibile modificare la monitorDir");
+                throw;
+            }
+        }
+        public void createDirOfUser(string path)
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+            }catch(Exception e)
+            {
+                Console.WriteLine("Impossibile creare la cartella sul server");
                 throw;
             }
         }

@@ -45,7 +45,7 @@ namespace newServerWF
             }
             catch (Exception e)
             {
-                MyConsole.Write("C'è stato un errore, chiudo la connessione con il client... dovrei vedere se riesco a ripristinarla piuttosto che chiuderla");
+                MyConsole.Write("Il client ha chiuso la connessione");
             }
             return this;
         }
@@ -90,6 +90,7 @@ namespace newServerWF
                 {
                     registerResponse.user = userService.saveUser(user);
                     registerResponse.isRegistred = true;
+                    userService.createDirOfUser(serverDirRoot + user.username);
                     registerResponse.message = "Registrazione avvenuta con successo";
                 }
                 catch (Exception e)
