@@ -38,7 +38,8 @@ namespace newServerWF
             int idParent;
             string[] dirNames = path.Split('\\');
             Dir rootDir = getRootDir(idUser, idVersion);
-            if( rootDir.name.Equals("\\"+dirNames[1]) )
+            //if( rootDir.name.Equals("\\"+dirNames[1]) )
+            if (rootDir.name.Equals(dirNames[1]))
             {
                 idDir = rootDir.idDir;
                 idParent = rootDir.idDir;
