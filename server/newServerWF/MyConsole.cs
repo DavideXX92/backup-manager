@@ -14,6 +14,8 @@ namespace newServerWF
         private static string serverLogPath = null;
         private static string clientLogPath = null;
 
+        private static List<string> bufferMsg = new List<string>();
+
         public static void setConsole(Form1.WriteOnConsoleDel del)
         {
             writeOnConsole = del;
@@ -59,6 +61,30 @@ namespace newServerWF
                     w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + logMessage);
                 }
             }
+        }
+        public static void Append(string logMessage)
+        {
+            bufferMsg.Add(logMessage);
+        }
+        public static void LogCommit()
+        {
+            if (clientLogPath == null)
+                Console.WriteLine("il file di log del client non e' stato settato");
+            else
+            {
+                foreach(string logMessage in bufferMsg)
+                {
+                    using (StreamWriter w = System.IO.File.AppendText(clientLogPath))
+                    {
+                        w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + logMessage);
+                    }
+                }
+                bufferMsg.Clear();
+            }
+        }
+        public static void LogRollback()
+        {
+            bufferMsg.Clear();
         }
     }
 }

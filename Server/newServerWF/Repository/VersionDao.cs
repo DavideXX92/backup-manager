@@ -15,5 +15,6 @@ namespace newServerWF
         Version getVersionInfo(int idUser, int idVersion);
         List<int> getAllIdOfVersionsOfaUser(int idUser);
         int getCurrentVersionID(int idUser);
+        int getLastClosedVersionID(int idUser);
     }
 }

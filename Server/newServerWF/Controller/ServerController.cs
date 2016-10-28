@@ -27,6 +27,7 @@ namespace newServerWF
         StoredVersions getIDofAllVersions(StoredVersions request);
         GetVersion getVersion(GetVersion request);
         GetVersion getOpenVersion(GetVersion request);
+        GetVersion getLastVersion(GetVersion request);
         GenericRequest deleteUserRepository(GenericRequest request);
         HashRequest sendHashToBeingReceived(HashRequest request);
         WrapFile handleRequestOfFile(File file);

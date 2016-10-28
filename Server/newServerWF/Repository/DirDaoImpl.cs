@@ -39,11 +39,12 @@ namespace newServerWF
             string[] dirNames = path.Split('\\');
             Dir rootDir = getRootDir(idUser, idVersion);
             //if( rootDir.name.Equals("\\"+dirNames[1]) )
-            if (rootDir.name.Equals(dirNames[1]))
+            //if (rootDir.name.Equals(dirNames[1]))
+            if (rootDir.name.Equals(dirNames[0]))
             {
                 idDir = rootDir.idDir;
                 idParent = rootDir.idDir;
-                for(int i=2; i<dirNames.Length; i++)
+                for(int i=1; i<dirNames.Length; i++)
                 {
                     idDir = checkIfDirExists(idUser, idVersion, @"\"+dirNames[i], idParent);
                     if (idDir == -1)
@@ -64,7 +65,7 @@ namespace newServerWF
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    for (int i = 2; i < dirNames.Length; i++)
+                    for (int i = 1; i < dirNames.Length; i++)
                     {
                         idDir = checkIfDirExists(idUser, idVersion, @"\" + dirNames[i], idParent);
                         if (idDir == -1)

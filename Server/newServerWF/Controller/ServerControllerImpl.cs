@@ -11,7 +11,7 @@ namespace newServerWF
 {
     class ServerControllerImpl : ServerController
     {
-        private const int nOfMaxVersionToSaveForUser = 3;
+        private const int nOfMaxVersionToSaveForUser = 5;
         private const string serverDirRoot = @"c:\ServerDir\";
 
         private FileSystemService fsService;
@@ -250,6 +250,25 @@ namespace newServerWF
                 }
                 request.version = versionService.getVersion(clientUser.username, idVersion);
                 request.message = "Versione aperta recuperata";
+            }
+            catch (Exception e)
+            {
+                request.error = e.Message;
+            }
+            return request;
+        }
+        public GetVersion getLastVersion(GetVersion request)
+        {
+            try
+            {
+                int idVersion = versionService.getLastClosedVersionID(clientUser.username);
+                if (idVersion == -1)
+                {
+                    request.version = null;
+                    return request;
+                }
+                request.version = versionService.getVersion(clientUser.username, idVersion);
+                request.message = "Ultima versione chiusa recuperata";
             }
             catch (Exception e)
             {

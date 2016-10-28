@@ -62,6 +62,7 @@ namespace newServerWF
             FileSystemService fsService = new FileSystemServiceImpl();
             UserService userService = new UserServiceImpl();
             VersionDao versionDao = new VersionDaoImpl();
+            MyConsole.Log("Aggiornamento versione");
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -72,45 +73,40 @@ namespace newServerWF
                         {
                             case "addFile":
                                 fsService.addFile(username, idVersion, operation.file);
-                                Console.WriteLine("FILE: " + operation.file.path + " Added");
                                 break;
                             case "updateFile":
                                 fsService.updateFile(username, idVersion, operation.file);
-                                Console.WriteLine("FILE: " + operation.file.path + " Updated");
                                 break;
                             case "renameFile":
                                 fsService.renameFile(username, idVersion, operation.oldPath, operation.newPath);
-                                Console.WriteLine("FILE: " + operation.oldPath + " renamed to: " + operation.newPath);
                                 break;
                             case "deleteFile":
                                 fsService.deleteFile(username, idVersion, operation.path);
-                                Console.WriteLine("FILE: " + operation.path + " Deleted");
                                 break;
                             case "addDir":
                                 fsService.addDir(username, idVersion, operation.dir);
-                                Console.WriteLine("DIR: " + operation.dir.path + " Added");
                                 break;
                             case "updateDir":
                                 fsService.updateDir(username, idVersion, operation.dir);
-                                Console.WriteLine("DIR: " + operation.dir.path + " Updated");
                                 break;
                             case "renameDir":
                                 fsService.renameDir(username, idVersion, operation.oldPath, operation.newPath);
-                                Console.WriteLine("DIR: " + operation.oldPath + " renamed to: " + operation.newPath);
                                 break;
                             case "deleteDir":
                                 fsService.deleteDir(username, idVersion, operation.path);
-                                Console.WriteLine("DIR: " + operation.path + " Deleted");
                                 break;
                         }
                         int idUser = userService.getIdByUsername(username);
                         versionDao.refreshLastUpdateDate(idUser, idVersion); 
                     }
                     scope.Complete();
+                    MyConsole.LogCommit();
                 }
             }catch(Exception e)
             {
                 Console.WriteLine("impossibile aggiornare la versione");
+                MyConsole.LogRollback();
+                MyConsole.Log("Aggiornamento fallito");
                 throw;
             }
         }
@@ -183,6 +179,21 @@ namespace newServerWF
             catch (Exception e)
             {
                 Console.WriteLine("impossibile recuperare l'id della versione corrente");
+                throw;
+            }   
+        }
+        public int getLastClosedVersionID(string username)
+        {
+            UserDao userDao = new UserDaoImpl();
+            VersionDao versionDao = new VersionDaoImpl();
+            try
+            {
+                int idUser = userDao.getIdByUsername(username);
+                return versionDao.getLastClosedVersionID(idUser);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("impossibile recuperare l'id dell'ultima versione chiusa");
                 throw;
             }   
         }

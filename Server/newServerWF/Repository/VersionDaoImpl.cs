@@ -185,5 +185,26 @@ namespace newServerWF
             dbConnect.CloseConnection();
             return idVersion;
         }
+        public int getLastClosedVersionID(int idUser)
+        {
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "SELECT MAX(idVersion) FROM version WHERE idUser=@idUser AND dateClosed IS NOT NULL";
+            cmd.Prepare();
+            cmd.Parameters.AddWithValue("@idUser", idUser);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            int idVersion = -1;
+            if (dataReader.HasRows)
+            {
+                dataReader.Read();
+                idVersion = dataReader.GetInt32(0);
+            }
+            dbConnect.CloseConnection();
+            return idVersion;
+        }
     }
 }
