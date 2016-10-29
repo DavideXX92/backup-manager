@@ -72,31 +72,5 @@ namespace newServerWF
             cmd.ExecuteNonQuery();
             dbConnect.CloseConnection();
         }
-        public void changeMonitorDir(string oldPath, string newPath, int idUser)
-        {
-            DBConnect dbConnect = new DBConnect();
-            MySqlConnection conn = dbConnect.OpenConnection();
-
-            string query = "UPDATE monitorDir SET path=@newPath WHERE path=@oldPath AND idUser=@idUser";
-
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = query;
-            cmd.Prepare();
-            cmd.Parameters.AddWithValue("@oldPath", oldPath);
-            cmd.Parameters.AddWithValue("@newPath", newPath);
-            cmd.Parameters.AddWithValue("@idUser", idUser);
-            try
-            {
-                cmd.ExecuteNonQuery();
-                dbConnect.CloseConnection();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                dbConnect.CloseConnection();
-                throw;
-            }
-        }
     }
 }

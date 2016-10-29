@@ -11,6 +11,5 @@ namespace newServerWF
         List<string> getMonitorDirsByIdUser(int idUser);
         void addMonitorDir(string path, int idUser);
         void deleteMonitorDir(string path, int idUser);
-        void changeMonitorDir(string oldPath, string newPath, int idUser);
     }
 }

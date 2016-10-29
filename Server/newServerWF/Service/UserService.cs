@@ -16,7 +16,6 @@ namespace newServerWF
         bool checkIfUsernameExists(string username);
         void addMonitorDir(string username, string path);
         void deleteMonitorDir(string username, string path);
-        void changeMonitorDir(string username, string oldPath, string newPath);
         void createDirOfUser(string path);
     }
 }

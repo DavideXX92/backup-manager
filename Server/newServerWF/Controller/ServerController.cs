@@ -19,7 +19,6 @@ namespace newServerWF
         Register handleRegistration(Register request);
         Login handleLogin(Login loginRequest);
         MonitorDir addMonitorDir(MonitorDir request);
-        MonitorDir changeMonitorDir(MonitorDir request);
         MonitorDir getMonitorDir(MonitorDir request);
         CreateVersion createNewVersion(CreateVersion request);
         UpdateVersion updateVersion(UpdateVersion request);

@@ -29,7 +29,6 @@ namespace newServerWF
             dict["004"] = new Func<Register, Register>(serverController.handleRegistration);
             dict["005"] = new Func<Login, Login>(serverController.handleLogin);
             dict["018"] = new Func<MonitorDir, MonitorDir>(serverController.addMonitorDir);
-            dict["012"] = new Func<MonitorDir, MonitorDir>(serverController.changeMonitorDir); 
             dict["015"] = new Func<MonitorDir, MonitorDir>(serverController.getMonitorDir);
             dict["006"] = new Func<CreateVersion, CreateVersion>(serverController.createNewVersion);
             dict["007"] = new Func<UpdateVersion, UpdateVersion>(serverController.updateVersion);

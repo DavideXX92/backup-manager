@@ -146,19 +146,6 @@ namespace newServerWF
             }
             return request;
         }
-        public MonitorDir changeMonitorDir(MonitorDir request)
-        {
-            try
-            {
-                userService.changeMonitorDir(clientUser.username, request.oldPath, request.newPath);
-                clientUser.changeMonitorDir(request.oldPath, request.newPath);
-                request.message = "MonitorDir modificata";
-            }catch(Exception e)
-            {
-                request.error = e.Message;
-            }
-            return request;
-        }
         public MonitorDir getMonitorDir(MonitorDir request)
         {
             request.monitorDir = clientUser.monitorDir;

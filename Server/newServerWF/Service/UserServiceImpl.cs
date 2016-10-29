@@ -84,19 +84,6 @@ namespace newServerWF
                 throw;
             }
         }
-        public void changeMonitorDir(string username, string oldPath, string newPath)
-        {
-            int idUser = userDao.getIdByUsername(username);
-            try
-            {
-                monitorDirDao.changeMonitorDir(oldPath, newPath, idUser);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Impossibile modificare la monitorDir");
-                throw;
-            }
-        }
         public void createDirOfUser(string path)
         {
             try
