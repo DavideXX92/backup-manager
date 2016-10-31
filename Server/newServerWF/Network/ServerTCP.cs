@@ -94,7 +94,6 @@ namespace newServerWF
             Monitor.Enter(sync);
             serverIsRunning = false;
             serverSocket.Close();
-            keepaliveSocket.Close();
             foreach (HandleClient handleClient in hcList)
                 handleClient.stop();
             Monitor.Exit(sync);

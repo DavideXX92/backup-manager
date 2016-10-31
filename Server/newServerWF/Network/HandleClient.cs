@@ -48,6 +48,7 @@ namespace newServerWF
         }
 
         public void stop(){
+            keepaliveSocket.Close();
             //kaThread.Abort();
             //serverThread.Abort();
             kaController.stop();
