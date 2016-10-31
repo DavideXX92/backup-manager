@@ -13,12 +13,8 @@ namespace newServerWF
     {
         private Socket clientSocket;
         private Socket keepaliveSocket;
-        private ServerController serverController;
-        private ServerController kaController;
+        private Socket c;
 
-        private Thread serverThread, kaThread;
-
-        private delegate ServerController MyTaskWorkerDelegate();
 
         public HandleClient(Socket clientSocket, Socket keepaliveSocket)
         { 
@@ -27,15 +23,15 @@ namespace newServerWF
         }
 
         public HandleClient start(){
-            
-            this.serverController = new ServerControllerImpl(clientSocket);
-            serverThread = new Thread(serverController.startLoop);
+
+            ServerController serverController = new ServerControllerImpl(clientSocket);
+            Thread serverThread = new Thread(serverController.startLoop);
             serverThread.Start(true);
 
-            Socket c = keepaliveSocket.Accept();
+            c = keepaliveSocket.Accept();
             MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Connection control accepted from " + c.RemoteEndPoint);
-            this.kaController = new ServerControllerImpl(c);
-            kaThread = new Thread(kaController.startLoop);
+            ServerController kaController = new ServerControllerImpl(c);
+            Thread kaThread = new Thread(kaController.startLoop);
             kaThread.Start(false);
 
             MyConsole.Write(Thread.CurrentThread.ManagedThreadId + "ASPETTOOOO");
@@ -49,10 +45,8 @@ namespace newServerWF
 
         public void stop(){
             keepaliveSocket.Close();
-            //kaThread.Abort();
-            //serverThread.Abort();
-            kaController.stop();
-            serverController.stop();
+            c.Close();
+            clientSocket.Close();
         }
 
     }
