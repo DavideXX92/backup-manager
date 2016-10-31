@@ -9,6 +9,7 @@ namespace newServerWF
     interface UserService
     {
         int getIdByUsername(string username);
+        List<User> getUsers();
         User getUser(string username);
         User saveUser(User user);
         void updateUser(User user);

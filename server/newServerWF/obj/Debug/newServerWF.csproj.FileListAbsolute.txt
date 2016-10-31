@@ -30,13 +30,13 @@ C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\newServerWF-CURRE
 C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\newServerWF-CURRENT\newServerWF\newServerWF\obj\Debug\newServerWF.pdb
 C:\Users\Giuseppe\Documents\Programmazione di Sistema\Progetto\newServerWF-CURRENT\newServerWF\newServerWF\obj\Debug\newServerWF.csprojResolveAssemblyReference.cache
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\bin\Debug\newServerWF.exe.config
-C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.exe
-C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.pdb
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\bin\Debug\newServerWF.exe
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\bin\Debug\newServerWF.pdb
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.csprojResolveAssemblyReference.cache
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.Form1.resources
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.Properties.Resources.resources
 C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.csproj.GenerateResource.Cache
+C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.exe
+C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.pdb
+C:\Users\Giuseppe\Documents\backup-manager\Server\newServerWF\obj\Debug\newServerWF.csprojResolveAssemblyReference.cache

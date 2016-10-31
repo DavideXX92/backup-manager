@@ -31,6 +31,30 @@ namespace newServerWF
             dbConnect.CloseConnection();
             return exists;
         }
+        public List<User> getUsers()
+        {
+            List<User> users = new List<User>();
+            DBConnect dbConnect = new DBConnect();
+            MySqlConnection conn = dbConnect.OpenConnection();
+
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "SELECT idUser, username, password, isLogged FROM user";
+            cmd.Prepare();
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            while (dataReader.Read())
+                users.Add( new User(dataReader.GetInt32(dataReader.GetOrdinal("idUser")),
+                                    dataReader.GetString(dataReader.GetOrdinal("username")),
+                                    dataReader.GetString(dataReader.GetOrdinal("password")),
+                                    dataReader.GetBoolean(dataReader.GetOrdinal("isLogged"))
+                                   ));
+
+            dataReader.Close();
+            dbConnect.CloseConnection();
+
+            return users;
+        }
         public int getIdByUsername(string username)
         {
             DBConnect dbConnect = new DBConnect();

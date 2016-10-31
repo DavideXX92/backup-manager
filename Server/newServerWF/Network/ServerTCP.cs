@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,13 +16,14 @@ namespace newServerWF
     {
         private bool serverIsRunning;
         private Thread t;
-        private TcpListener listener;
+        private int backlog = 15;
+        private Socket serverSocket, keepaliveSocket;
         private int serverPort;
         private readonly object sync = new object();
-        private List<ServerController> scList = new List<ServerController>();
+        private List<HandleClient> hcList = new List<HandleClient>();
         private string serverLogPath = @"c:\ServerDir\Log\serverLog.txt";
 
-        private delegate ServerController MyTaskWorkerDelegate();
+        private delegate HandleClient MyTaskWorkerDelegate();
 
         public ServerTCP(int serverPort)
         {
@@ -33,59 +35,93 @@ namespace newServerWF
             serverIsRunning = true;
             MyConsole.setServerLog(serverLogPath);
             MyConsole.Write("Server started");
-            t = new Thread(() => loopClients()); // lambda function (parameters) => {istructions}
+            t = new Thread(loopClients); // lambda function (parameters) => {istructions}
             t.Start();
         }
 
         private void loopClients()
         {
-            listener = new TcpListener(IPAddress.Any, serverPort); //Listen on all the network interface
-            MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " The server is running at port " + serverPort);
-            // Start Listening at the specified port
-            listener.Start();
+            // Server Socket
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverSocket.Bind(new IPEndPoint(IPAddress.Any, Config.ServerPort));
+
+            // KeepAlive Socket
+            keepaliveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            keepaliveSocket.Bind(new IPEndPoint(IPAddress.Any, Config.KeepalivePort));
+            keepaliveSocket.Listen(backlog);
+            //keepaliveSocket.ReceiveTimeout = Config.KeepaliveTimeout;
+
+            // Mark all users as offline (useful if server crashed)
+            try { 
+                logOutAll();
+            }
+            catch (Exception e)
+            {
+                MyConsole.Write("Error accessing database: " + e.Message + "; aborting...");
+                return;
+            }
+
+            serverSocket.Listen(backlog);
+            MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Server started at port " + Config.ServerPort);
+
             while (serverIsRunning)
             {
                 try
                 {
-                    // wait for client connection
                     MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Waiting for a connection...");
-                    TcpClient newClient = listener.AcceptTcpClient();
+                    Socket clientSocket = serverSocket.Accept();
                     Monitor.Enter(sync);
                     if (serverIsRunning)
                     {
-                        MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Connection accepted from " + newClient.Client.RemoteEndPoint);
-
-                        // client found.
-                        // create a class to handle communication
-                        ServerController serverController = new ServerControllerImpl(newClient);
-                        scList.Add(serverController);
-                        MyTaskWorkerDelegate worker = new MyTaskWorkerDelegate(serverController.startLoop);
+                        MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Connection accepted from " + clientSocket.RemoteEndPoint);
+                        // client found, create a class to handle communication
+                        HandleClient handleClient = new HandleClient(clientSocket, keepaliveSocket);
+                        hcList.Add(handleClient);
+                        MyTaskWorkerDelegate worker = new MyTaskWorkerDelegate(handleClient.start);
                         IAsyncResult result = worker.BeginInvoke(new AsyncCallback(clearClient), worker);
                     }
                     Monitor.Exit(sync);
                 }
                 catch (Exception x)
                 {
-                    MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Server stopped"); // because i force listener.stop();
+                    MyConsole.Write(Thread.CurrentThread.ManagedThreadId + " Server stopped"); // because i force serverSocket.stop();
                 } 
             }
         }
 
+        public void Stop()
+        {
+            Monitor.Enter(sync);
+            serverIsRunning = false;
+            serverSocket.Close();
+            keepaliveSocket.Close();
+            foreach (HandleClient handleClient in hcList)
+                handleClient.stop();
+            Monitor.Exit(sync);
+        }
+        
         private void clearClient(IAsyncResult result)
         {
+            MyConsole.Write("--------dentro la clearclient--");
             MyTaskWorkerDelegate d = (MyTaskWorkerDelegate)result.AsyncState;
-            ServerController client = d.EndInvoke(result);
-            scList.Remove(client);
-        }
-       
-        public void Stop(){
-            Monitor.Enter(sync); 
-            serverIsRunning = false;
-            listener.Stop();
-            foreach (ServerController serverController in scList)
-                serverController.stop();
-            Monitor.Exit(sync); 
+            HandleClient client = d.EndInvoke(result);
+            hcList.Remove(client);
+            MyConsole.Write("--------HandleClient rimosso---");
         }
 
+        private void logOutAll(){
+            UserService userService = new UserServiceImpl();
+            List<User> users = userService.getUsers();
+            try{
+                foreach (User user in users)
+                {
+                    user.isLogged = false;
+                    userService.updateUser(user);
+                }
+            }catch(Exception e)
+            {
+                throw;
+            }
+        }
     }
 }

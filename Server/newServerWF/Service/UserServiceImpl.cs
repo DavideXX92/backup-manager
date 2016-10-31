@@ -25,6 +25,10 @@ namespace newServerWF
             else
                 throw new Exception("username not found");
         }
+        public List<User> getUsers()
+        {
+            return userDao.getUsers();
+        }
         public User getUser(string username)
         {
             if (userDao.exists(username)){

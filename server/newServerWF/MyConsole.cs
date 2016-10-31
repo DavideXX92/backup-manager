@@ -13,6 +13,7 @@ namespace newServerWF
         private static Form1.WriteOnConsoleDel writeOnConsole = null;
         private static string serverLogPath = null;
         private static string clientLogPath = null;
+        private static object _lock = new object();
 
         private static List<string> bufferMsg = new List<string>();
 
@@ -32,21 +33,24 @@ namespace newServerWF
         }
 
         public static void Write(string str){
-            
-            if (writeOnConsole == null)
-                Console.WriteLine(str);
-            else
-                writeOnConsole(str);
-
-            if (serverLogPath == null)
-                Console.WriteLine("il file di log del server non e' stato settato");
-            else
+            lock (_lock)
             {
-                using (StreamWriter w = System.IO.File.AppendText(serverLogPath))
+                if (writeOnConsole == null)
+                    Console.WriteLine(str);
+                else
+                    writeOnConsole(str);
+
+                if (serverLogPath == null)
+                    Console.WriteLine("il file di log del server non e' stato settato");
+                else
                 {
-                    w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + str);
+                    using (StreamWriter w = System.IO.File.AppendText(serverLogPath))
+                    {
+                        w.WriteLine("{0} {1}", DateTime.Now.ToShortDateString(), DateTime.Now.ToLongTimeString() + ": " + str);
+                    }
                 }
             }
+            
                 
         }
 

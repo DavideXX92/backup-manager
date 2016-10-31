@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -18,16 +19,16 @@ namespace newServerWF
         private UserService userService;
         private VersionService versionService;
 
-        private TcpClient client;
+        private Socket socketClient;
         private HandlePackets clientConn;
         private Dizionario dizionario; //Class to associate messages with functions
 
         private User clientUser;
         private string clientDir;
 
-        public ServerControllerImpl(TcpClient client)
+        public ServerControllerImpl(Socket socketClient)
         {
-            this.client = client;
+            this.socketClient = socketClient;
             this.clientUser = null;
             this.clientDir = null;
             this.dizionario = new Dizionario(this);
@@ -36,18 +37,26 @@ namespace newServerWF
             this.versionService = new VersionServiceImpl();
         }
 
-        public ServerController startLoop()
+        public void startLoop(object encrypted)
         {
+            if((bool)encrypted)
+                clientConn = new HandlePacketsSecure(socketClient, dizionario.getDelegate());
+            else
+                clientConn = new HandlePacketsUnsecure(socketClient, dizionario.getDelegate());
             try
             {
-                clientConn = new HandlePackets(client, dizionario.getDelegate());
                 clientConn.startListen();
             }
             catch (Exception e)
             {
-                MyConsole.Write("Il client ha chiuso la connessione");
-            }
-            return this;
+                string type;
+                if ((bool)encrypted == true)
+                    type = "dati";
+                else
+                    type = "di controllo";
+                Console.WriteLine("Il client ha chiuso la connessione " + type + " ex: " + e.Message);
+                MyConsole.Write("Il client ha chiuso la connessione " + type);
+            }   
         }
         public void stop()
         { 
@@ -300,7 +309,6 @@ namespace newServerWF
         }
         public WrapFile handleRequestOfFile(File file)
         {
-            //String pathSrc = clientDir + file.hash + file.extension;
             String pathSrc = clientDir + file.hash;
             FileInfo fileinfo = new FileInfo(pathSrc);
             file.size = (int)fileinfo.Length;
@@ -309,7 +317,6 @@ namespace newServerWF
         }
         public WrapFile initializeReceiptOfFile(File file)
         {
-            //string pathDst = clientDir + file.hash + file.extension;
             string pathDst = clientDir + file.hash;
             WrapFile wrapFile = new WrapFile(file, -1, new FileStream(pathDst, FileMode.Create, FileAccess.Write));
             return wrapFile;

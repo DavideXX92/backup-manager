@@ -11,7 +11,7 @@ namespace newServerWF
     {
         //Funzioni che piò eseguire il server una volta stabilita la connessione con il client
         
-        ServerController startLoop();
+        void startLoop(object encrypted);
         void stop();
 
         GenericRequest helloMessage(GenericRequest request);
