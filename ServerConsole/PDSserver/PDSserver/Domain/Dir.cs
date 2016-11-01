@@ -41,7 +41,7 @@ namespace PDSserver
             if (parentDir == null)
                 this.path = name;
             else
-                this.path = parentDir.path + name;
+                this.path = parentDir.path + @"\" + name;
             this.relativePath = path;
             this.creationTime = creationTime;
             this.lastWriteTime = lastWriteTime;

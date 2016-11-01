@@ -38,15 +38,13 @@ namespace PDSserver
             int idParent;
             string[] dirNames = path.Split('\\');
             Dir rootDir = getRootDir(idUser, idVersion);
-            //if( rootDir.name.Equals("\\"+dirNames[1]) )
-            //if (rootDir.name.Equals(dirNames[1]))
             if (rootDir.name.Equals(dirNames[0]))
             {
                 idDir = rootDir.idDir;
                 idParent = rootDir.idDir;
                 for(int i=1; i<dirNames.Length; i++)
                 {
-                    idDir = checkIfDirExists(idUser, idVersion, @"\"+dirNames[i], idParent);
+                    idDir = checkIfDirExists(idUser, idVersion, dirNames[i], idParent);
                     if (idDir == -1)
                         break;
                     else
@@ -67,9 +65,9 @@ namespace PDSserver
                 {
                     for (int i = 1; i < dirNames.Length; i++)
                     {
-                        idDir = checkIfDirExists(idUser, idVersion, @"\" + dirNames[i], idParent);
+                        idDir = checkIfDirExists(idUser, idVersion, dirNames[i], idParent);
                         if (idDir == -1)
-                            idDir = saveDirectory(@"\" + dirNames[i], idParent, idUser, idVersion, DateTime.Now, DateTime.Now);
+                            idDir = saveDirectory(dirNames[i], idParent, idUser, idVersion, DateTime.Now, DateTime.Now);
                         idParent = idDir;
                     }
                     scope.Complete();

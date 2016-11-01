@@ -220,7 +220,7 @@ namespace PDSserver
             {
                 try
                 {
-                    string newName = newPath.Substring(newPath.LastIndexOf(@"\"));
+                    string newName = newPath.Substring(newPath.LastIndexOf(@"\")).Substring(1);
                     dirDao.renameDirectory(idUser, version, idDir, newName);
                 }
                 catch (Exception e)
