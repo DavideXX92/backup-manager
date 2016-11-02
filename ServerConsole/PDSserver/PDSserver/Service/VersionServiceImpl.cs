@@ -104,7 +104,7 @@ namespace PDSserver
                 }
             }catch(Exception e)
             {
-                Console.WriteLine("impossibile aggiornare la versione");
+                Console.WriteLine("impossibile aggiornare la versione: " + e.Message);
                 MyConsole.LogRollback();
                 MyConsole.Log("Aggiornamento fallito");
                 throw;

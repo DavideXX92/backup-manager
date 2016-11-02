@@ -107,7 +107,7 @@ namespace PDSserver
                 clientUser.isLogged = true;
                 try
                 {
-                    userService.updateUser(user);
+                    userService.updateUser(clientUser);
                 }
                 catch (Exception e)
                 {

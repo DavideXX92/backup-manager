@@ -22,9 +22,8 @@ namespace PDSserver
         private Socket socketClient;
         private NetworkStream netStream;
         private const int CODELENGTH = 3;
-        private const int DIMBUF = 65536;
-        private byte[] rBuffer = new byte[DIMBUF];
-        private byte[] wBuffer = new byte[DIMBUF];
+        private byte[] rBuffer;
+        private byte[] wBuffer;
         private int bytesRead;
         private bool isListen;
 
@@ -69,7 +68,9 @@ namespace PDSserver
                 int bytesReamining = length;
                 int bytesSent = 0;
                 int bytesToSend;
-                int chunk = DIMBUF;
+                int chunk = 1024;
+
+                wBuffer = new byte[chunk];
 
                 while (bytesReamining > 0)
                 {
@@ -103,8 +104,9 @@ namespace PDSserver
                 int bytesReceived = 0;
                 bytesRead = 0;
                 int bytesToRead;
-                //int chunk = DIMBUF;
                 int chunk = 1024;
+
+                rBuffer = new byte[length];
 
                 while (bytesReamining > 0)
                 {
@@ -208,9 +210,10 @@ namespace PDSserver
             int bytesReceived = 0;
             int bytesRead;
             int bytesToRead;
-            //int chunk = DIMBUF;
             int chunk = 1024;
             string json;
+
+            rBuffer = new byte[length];
 
             while (bytesReamining > 0)
             {
@@ -240,26 +243,24 @@ namespace PDSserver
         {
             byte[] codeBytes = new byte[3];
             byte[] lengthBytes = new byte[sizeof(int)];
-            byte[] objBuffer = new byte[DIMBUF];
             string json;
 
             try
             {
-                //json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
                 json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize, PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects });
 
                 //Console.WriteLine(json);
-                objBuffer = ASCIIEncoding.ASCII.GetBytes(json);
-
-                int length = objBuffer.Length;
 
                 codeBytes = ASCIIEncoding.ASCII.GetBytes(code);
                 netStream.Write(codeBytes, 0, codeBytes.Length);
 
+                int length = ASCIIEncoding.ASCII.GetBytes(json).Length;
                 lengthBytes = BitConverter.GetBytes(length);
                 netStream.Write(lengthBytes, 0, lengthBytes.Length);
 
-                netStream.Write(objBuffer, 0, objBuffer.Length);
+                wBuffer = new byte[length];
+                wBuffer = ASCIIEncoding.ASCII.GetBytes(json);
+                netStream.Write(wBuffer, 0, length);
 
                 if (code.Equals("001"))
                 {
