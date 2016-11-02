@@ -49,6 +49,13 @@ namespace PDSserver
                 {
                     if (idDir == -1)
                         idDir = dirDao.createDirFromPath(idUser, version, pathWithoutFile);
+
+                    if (file.extension == null)
+                    {
+                        string[] tmp = file.name.Split('.');
+                        file.extension = tmp[1];
+                    }
+
                     fileDao.saveFile(file.name, file.size, file.hash, file.extension, idDir, idUser, version, file.creationTime, file.lastWriteTime);
                     scope.Complete();
                 }

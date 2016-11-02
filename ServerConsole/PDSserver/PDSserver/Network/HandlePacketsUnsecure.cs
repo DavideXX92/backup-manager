@@ -106,7 +106,7 @@ namespace PDSserver
                 int bytesToRead;
                 int chunk = 1024;
 
-                rBuffer = new byte[length];
+                rBuffer = new byte[chunk];
 
                 while (bytesReamining > 0)
                 {
