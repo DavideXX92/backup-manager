@@ -11,7 +11,7 @@ namespace PDSserver
     {
         private delegate int cleanerDelegate(string serverDirRoot, string username);
 
-        public Version saveVersion(Dir dirTree, string username, string clientDir)
+        public Version saveVersion(Dir dirTree, string username)
         {
             UserDao userDao = new UserDaoImpl();
             VersionDao versionDao = new VersionDaoImpl();

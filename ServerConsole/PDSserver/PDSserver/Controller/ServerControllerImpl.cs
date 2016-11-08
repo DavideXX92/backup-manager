@@ -160,7 +160,7 @@ namespace PDSserver
                     if (idOpenVersion != -1)
                         versionService.closeVersion(clientUser.username, idOpenVersion);
 
-                    request.version = versionService.saveVersion(request.version.dirTree, clientUser.username, clientDir);
+                    request.version = versionService.saveVersion(request.version.dirTree, clientUser.username);
                     scope.Complete();
                 }
                 return request;
