@@ -11,7 +11,7 @@ namespace PDSserver
     {
         private delegate int cleanerDelegate(string serverDirRoot, string username);
 
-        public Version saveVersion(Dir dirTree, string username)
+        public Version saveVersion(Dir dirTree, string username, string clientDir)
         {
             UserDao userDao = new UserDaoImpl();
             VersionDao versionDao = new VersionDaoImpl();
@@ -29,6 +29,7 @@ namespace PDSserver
                     scope.Complete();
                 }
                 Version version = new Version(idVersion, dirTree, dateCreation);
+
                 return version;
             }catch(Exception e)
             {
@@ -134,10 +135,14 @@ namespace PDSserver
                 int idUser = userDao.getIdByUsername(username);
                 versionDao.deleteVersion(idUser, idVersion);
 
-                //lancia il cleaner in modo asincrono
+                //lancia il cleaner
                 FileSystemService fsService = new FileSystemServiceImpl();
-                cleanerDelegate cleaner = new cleanerDelegate(fsService.cleaner);
-                IAsyncResult result = cleaner.BeginInvoke(clientDir, username, new AsyncCallback(cleanerFinished), cleaner);
+                fsService.cleaner(clientDir, username);
+
+                //lancia il cleaner in modo asincrono
+                //FileSystemService fsService = new FileSystemServiceImpl();
+                //cleanerDelegate cleaner = new cleanerDelegate(fsService.cleaner);
+                //IAsyncResult result = cleaner.BeginInvoke(clientDir, username, new AsyncCallback(cleanerFinished), cleaner);
             }
             catch (Exception e)
             {

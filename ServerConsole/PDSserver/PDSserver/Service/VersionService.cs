@@ -8,7 +8,7 @@ namespace PDSserver
 {
     interface VersionService
     {
-        Version saveVersion(Dir dirTree, string username);
+        Version saveVersion(Dir dirTree, string username, string clientDir);
         Version getVersion(string username, int idVersion);
         void updateVersion(string username, int idVersion, UpdateVersion updateVersion);
         void closeVersion(string username, int idVersion);
