@@ -177,8 +177,8 @@ namespace PDSserver
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Cleaner: impossibile eliminare il file: " + pathFile);
-                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Cleaner: file da rimuovere: " + pathFile);
+                        //Console.WriteLine(e.Message);
                     }
                 }
                 return count;
