@@ -1,0 +1,217 @@
+﻿<Window x:Class="PDSclient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:local="clr-namespace:PDSclient"
+        mc:Ignorable="d"
+        xmlns:self="clr-namespace:PDSclient"
+        Title="MainWindow" Height="700" Width="1150"
+        WindowStyle="None" Background="Transparent" 
+        AllowsTransparency="True"
+        MouseLeftButtonDown="windowLeftButtonDownHandler"
+        Icon="./images/backup3.png">
+    <Border Style="{StaticResource MainBorderStyle}">
+        <Grid>
+            <Grid.Resources>
+                <local:TrayIconCommand x:Key="command"/>
+            </Grid.Resources>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.8*"/> <!-- Row for X _ buttons -->
+                <RowDefinition Height="1*"/> <!-- Row Path -->
+                <RowDefinition Height="9*"/> <!-- Row Files representation -->
+                <RowDefinition Height="0.5*"/> <!-- Row for Console padding -->
+                <RowDefinition Height="2.5*"/> <!-- Row for Console -->
+                <RowDefinition Height="0.8*"/> <!-- Row for Bottom padding -->
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <tb:TaskbarIcon x:Name="trayIcon" IconSource="./images/Icons/backup3.ico"
+                            DoubleClickCommand="{StaticResource command}"
+                            />
+            <Grid Grid.Row="0" Grid.Column="2" Margin="0,5,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource windowControlButton}" Content="_" Click="buttonReduceHandler"/>
+                <Button Grid.Column="1" Style="{StaticResource windowControlButton}" Content="X" Click="buttonCloseHandler"/>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32*"/> <!--File system tree view-->
+                     <!--File system list view-->
+                    <ColumnDefinition Width="2*"/> <!--Padding left of the version list -->
+                    <ColumnDefinition Width="15*"/> <!--Version list-->
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Style="{StaticResource path}" x:Name="fullPath"/>
+                <Button Grid.Column="1" Style="{StaticResource buttonChangeDir}" x:Name="buttonChangeDir" Click="changeMonitoredDirHandler"
+                        Margin="5,0,0,0"/>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*"/> <!--File system tree view-->
+                    <ColumnDefinition Width="22*"/> <!--File system list view-->
+                    <ColumnDefinition Width="2*"/> <!--Padding left of the version list -->
+                    <ColumnDefinition Width="15*"/> <!--Version list-->
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" x:Name="monitorAlbero">
+                    <TreeView SelectedItemChanged="showDirectory" Name="treeView">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+
+                                <Setter Property="FontWeight" Value="Normal" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type self:Dir}" ItemsSource="{Binding elencoSubdirectory}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding ImgSrc}" Margin="0, 0, 5, 0" Width="20" Height="20" x:Name="img"/>
+                                    <TextBlock Text="{Binding name}" />
+                                </StackPanel>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}}}" Value="True">
+                                        <Setter Property="Source" TargetName="img" Value="{Binding folderOpened}" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </Grid>
+
+                <ListView Grid.Column="1" Name="listDataBinding" MouseDoubleClick="listMouseDoubleClick">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding ImgSrc}" Margin="0, 0, 5, 0" Width="20" Height="20"/>
+                                            <TextBlock Text="{Binding name}" FontWeight="Bold" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Lenght}"/>
+                            <GridViewColumn Header="Creation time" DisplayMemberBinding="{Binding creationTimeToString}"/>
+                            <GridViewColumn Header="Last update" DisplayMemberBinding="{Binding lastWriteTimeToString}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Grid Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/> <!--Padding-->
+                        <RowDefinition Height="4*"/> <!--Autosynch & new version buttons-->
+                        <RowDefinition Height="0*"/> <!--Padding-->
+                        <RowDefinition Height="13*"/> <!--Version list-->
+                        <RowDefinition Height="1*"/> <!--Padding-->
+                        <RowDefinition Height="2*"/> <!--Restore button-->
+                        <RowDefinition Height="4*"/> <!--Padding-->
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Vertical">
+                        <Label Style="{StaticResource myText}" x:Name="synchStatus" Content="Auto Synch"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Style="{StaticResource myText}" Content="Off" Margin="10,0,0,0"/>                        
+                                <CheckBox Style="{StaticResource SliderCheckBox}" x:Name="checkBoxAutoSynch"
+                                          Checked="checkBoxAutoChecked" Unchecked="checkBoxAutoUnchecked"/>
+                                <Label Style="{StaticResource myText}" Content="On"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Style="{StaticResource buttonAlert}" x:Name="manualSynch" Content="Manual synch" Click="manualSynchHandler"
+                                Margin="10,0,0,0"/>
+                        <ProgressBar Style="{StaticResource ProgressBarCustomStyle}" x:Name="manualSynchProgress" Minimum="0" 
+                                 Maximum="100" Height="15" Width="100" Visibility="Collapsed" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <ListView   
+                        Grid.Row="3"
+                        Name="versionList"
+                        Loaded="versionTreeLoaded" 
+                        SelectedIndex="{Binding Path=SelectedIndexValue}" 
+                        SelectionChanged="versionSelectionChanged"     
+                        Height="160"                                        
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1">
+
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <EventSetter Event="PreviewMouseDown" Handler="onMouseVersionClick"/>
+                                <Style.Triggers>                                   
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#4b8af1"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#164566"/>                                        
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </ListView.Resources>
+
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Version ID" HeaderContainerStyle="{StaticResource GridHeaderStyle}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding idVersion}" Style="{StaticResource myText}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Creation time" HeaderContainerStyle="{StaticResource GridHeaderStyle}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding dateCreationToString}" Style="{StaticResource myText}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource buttonAlert}" x:Name="newVersion" Content="New version" Click="newVersionHandler"/>
+                        <ProgressBar Style="{StaticResource ProgressBarCustomStyle}" x:Name="newVersionProgress" Minimum="0" 
+                                 Maximum="100" Height="15" Width="100" Visibility="Collapsed"/>
+                        <Button Style="{StaticResource buttonAlert}" x:Name="buttonRestore" Content="Restore" Click="buttonRestoreHandler"
+                                Margin="25,0,0,0"/>
+                        <ProgressBar Style="{StaticResource ProgressBarCustomStyle}" x:Name="buttonRestoreProgress" Minimum="0" 
+                                 Maximum="100" Height="15" Width="100" Visibility="Collapsed" IsIndeterminate="false" Margin="25,0,0,0"/>
+                    </StackPanel>                    
+                </Grid>               
+            </Grid>
+            <Grid Grid.Row="4" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <RichTextBox Grid.Column="1" x:Name="console" Style="{StaticResource consoleStyle}"/>
+            </Grid>        
+            <Grid Grid.Row="5" Grid.Column="1"/>
+        </Grid>
+    </Border>       
+</Window>

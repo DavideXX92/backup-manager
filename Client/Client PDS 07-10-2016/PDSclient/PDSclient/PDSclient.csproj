@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3A01F1F2-393F-47BC-8593-F55C0E57D943}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PDSclient</RootNamespace>
+    <AssemblyName>PDSclient</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>backup3.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsInput">
+      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    </Reference>
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\packages\WpfAnimatedGif.1.4.14\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Alert.xaml.cs">
+      <DependentUpon>Alert.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config.cs" />
+    <Compile Include="Exceptions\BusyResourceException.cs" />
+    <Compile Include="Controller\UserController.cs" />
+    <Compile Include="Controller\UserControllerImpl.cs" />
+    <Compile Include="Dictionary.xaml.cs">
+      <DependentUpon>Dictionary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Domain\Dir.cs" />
+    <Compile Include="Domain\File.cs" />
+    <Compile Include="Exceptions\IncontruentVersionException.cs" />
+    <Compile Include="Exceptions\NetworkException.cs" />
+    <Compile Include="Exceptions\ServerException.cs" />
+    <Compile Include="Network\HandlePackets.cs" />
+    <Compile Include="Network\HandlePacketsSecure.cs" />
+    <Compile Include="Loading.xaml.cs">
+      <DependentUpon>Loading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyBinder.cs" />
+    <Compile Include="MyBuffer.cs" />
+    <Compile Include="Domain\Node.cs" />
+    <Compile Include="MyConsole.cs" />
+    <Compile Include="PasswordBoxMonitor.cs" />
+    <Compile Include="Service\DirTreeService.cs" />
+    <Compile Include="Service\DirTreeServiceImpl.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Domain\Version.cs" />
+    <Compile Include="Service\NetworkService.cs" />
+    <Compile Include="Service\NetworkServiceImpl.cs" />
+    <Compile Include="SharedClasses\CloseVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\CreateVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\GenericRequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\GetVersion.cs" />
+    <Compile Include="SharedClasses\HashRequest.cs" />
+    <Compile Include="SharedClasses\Login.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\MonitorDir.cs" />
+    <Compile Include="SharedClasses\Operation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\Register.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\RestoreVersion.cs" />
+    <Compile Include="SharedClasses\StoredVersions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\UpdateVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharedClasses\WrapFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Signin.xaml.cs">
+      <DependentUpon>Signin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TrayIconCommand.cs" />
+    <Compile Include="Watcher.cs" />
+    <Page Include="Alert.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Loading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Service\FileSystemService.cs" />
+    <Compile Include="Service\FileSystemServiceImpl.cs" />
+    <Compile Include="Network\HandlePacketsUnsecure.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Signin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Variable.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Resource Include="Resources\fonts\AGENTORANGE.TTF" />
+    <Resource Include="Resources\fonts\Akaju_Outline_demo.otf" />
+    <Resource Include="Resources\fonts\BRASSST_.ttf" />
+    <Resource Include="Resources\fonts\Bubble Letters.ttf" />
+    <Resource Include="Resources\fonts\Charout.ttf" />
+    <Resource Include="Resources\fonts\Children s  Book.ttf" />
+    <Resource Include="Resources\fonts\Chocolate Covered Raindrops Hollow.ttf" />
+    <Resource Include="Resources\fonts\overload burn.ttf" />
+    <Resource Include="Resources\fonts\push2.ttf" />
+    <Resource Include="Resources\fonts\SFPortMcKenzieOutline-Itali.ttf" />
+    <Resource Include="Resources\fonts\SFPortMcKenzieOutline.ttf" />
+    <Resource Include="Resources\fonts\VTC-KreepyKomikaTwo-Outline.ttf" />
+    <Resource Include="fonts\AGENTORANGE.TTF" />
+    <Resource Include="fonts\Akaju_Outline_demo.otf" />
+    <Resource Include="fonts\BRASSST_.ttf" />
+    <Resource Include="fonts\Bubble Letters.ttf" />
+    <Resource Include="fonts\Charout.ttf" />
+    <Resource Include="fonts\Children s  Book.ttf" />
+    <Resource Include="fonts\Chocolate Covered Raindrops Hollow.ttf" />
+    <Resource Include="fonts\overload burn.ttf" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <Resource Include="fonts\push2.ttf" />
+    <Resource Include="fonts\SFPortMcKenzieOutline-Itali.ttf" />
+    <Resource Include="fonts\SFPortMcKenzieOutline.ttf" />
+    <Resource Include="fonts\VTC-KreepyKomikaTwo-Outline.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Folder_Closed.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Folder_Opened.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Folder_stuffed.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Generic_File.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Image_File.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Library_File.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\MixedMediaFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\MusicFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\rtf.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Setup.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Shell File.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\txt.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\url.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\VideoFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\zippedFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\AudioFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\batfile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\cmd.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\Executable.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\sfondo1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\man.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\man_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\lock_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\sfondo1_sfocato1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\synch1.png" />
+    <Resource Include="images\synch2.png" />
+    <Resource Include="images\synch3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\backup1.png" />
+    <Resource Include="images\backup2.png" />
+    <Resource Include="images\backup3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\folderSearch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\wpf-notifyicon\NotifyIconWpf\NotifyIconWpf.csproj">
+      <Project>{7ac63864-7638-41c4-969c-d3197ef2bed9}</Project>
+      <Name>NotifyIconWpf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\backup3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\Icons\c.png" />
+    <Resource Include="images\Icons\cpp.png" />
+    <Resource Include="images\Icons\css.png" />
+    <Resource Include="images\Icons\doc.png" />
+    <Resource Include="images\Icons\exe.png" />
+    <Resource Include="images\Icons\h.png" />
+    <Resource Include="images\Icons\hpp.png" />
+    <Resource Include="images\Icons\html.png" />
+    <Resource Include="images\Icons\iso.png" />
+    <Resource Include="images\Icons\java.png" />
+    <Resource Include="images\Icons\js.png" />
+    <Resource Include="images\Icons\odf.png" />
+    <Resource Include="images\Icons\ods.png" />
+    <Resource Include="images\Icons\odt.png" />
+    <Resource Include="images\Icons\otp.png" />
+    <Resource Include="images\Icons\pdf.png" />
+    <Resource Include="images\Icons\php.png" />
+    <Resource Include="images\Icons\ppt.png" />
+    <Resource Include="images\Icons\py.png" />
+    <Resource Include="images\Icons\rb.png" />
+    <Resource Include="images\Icons\sql.png" />
+    <Resource Include="images\Icons\xls.png" />
+    <Resource Include="images\Icons\xml.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="backup3.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

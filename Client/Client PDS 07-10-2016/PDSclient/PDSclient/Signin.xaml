@@ -1,0 +1,108 @@
+﻿<Window x:Class="PDSclient.Signin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+        Title="Signin" MinHeight="400" MinWidth="650" Height="400" Width="650" WindowStyle="None" Background="Transparent"
+        AllowsTransparency="True" Visibility="Visible" MouseLeftButtonDown="windowLeftButtonDownHandler"
+        Icon="./images/backup3.png">
+    <Border Style="{StaticResource MainBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="20*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0" Margin="0,5,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="26*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="1" Style="{StaticResource windowControlButton}" Content="_" Click="buttonReduceHandler" KeyboardNavigation.IsTabStop="False"/>
+                <Button Grid.Column="2" Style="{StaticResource windowControlButton}" Content="X" Click="buttonCloseHandler" KeyboardNavigation.IsTabStop="False"/>
+            </Grid>
+            
+            <TabControl Grid.Row="1" x:Name="tabLogin_Reg" Background="Transparent" BorderBrush="{x:Null}">
+                <TabItem x:Name="Log_in" Visibility="Collapsed" Header="Login" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{x:Null}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="7*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="6*" />
+                            <RowDefinition Height="3*"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Style="{StaticResource titleH}" Content="Login to begin the monitoring!" FontSize="30"/>
+                        <TextBox Grid.Row="1" Style="{StaticResource placeHolder}" x:Name="usernameLog" 
+                                 Tag="Username" FontSize="{StaticResource signinPlaceholderFont}" 
+                                 Height="{StaticResource signinPlaceholderHeight}" Width="{StaticResource signinPlaceholderWidth}" 
+                                 TextWrapping="Wrap" AllowDrop="False" KeyboardNavigation.TabIndex="1"
+                                 KeyDown="OnKeyDownHandlerLogin"/>
+                        <PasswordBox Grid.Row="2" Style="{StaticResource placeHolderPwd}" x:Name="passwordLog" 
+                                     Tag="Password" FontSize="{StaticResource signinPlaceholderFont}" 
+                                     Height="{StaticResource signinPlaceholderHeight}" Width="{StaticResource signinPlaceholderWidth}" 
+                                     AllowDrop="False" KeyboardNavigation.TabIndex="2"
+                                     KeyDown="OnKeyDownHandlerLogin"/>
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="1" Style="{StaticResource buttonSendForm}" x:Name="logIn" Content="Sign me in"
+                                    Width="{StaticResource signinConfirmWidth}"  Click="_login" KeyboardNavigation.IsTabStop="False"/>
+                            <Button Grid.Column="2" Style="{StaticResource buttonSwitch}"  x:Name="switchToRegistra" 
+                                    Content="Register a new account ->" Width="165" Click="_switchTab" KeyboardNavigation.IsTabStop="False"/>
+                        </Grid>
+                        <Label Grid.Row="4" Style="{StaticResource error}" x:Name="errorMessageLog" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Register" Visibility="Collapsed"  HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="7*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="6*" />
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Style="{StaticResource titleH}" Content="Register a new account!" FontSize="30"/>
+                        <TextBox Grid.Row="1" Style="{StaticResource placeHolder}" x:Name="usernameReg" Tag="Username" 
+                                 FontSize="{StaticResource signinPlaceholderFont}" Height="{StaticResource signinPlaceholderHeight}"
+                                 Width="{StaticResource signinPlaceholderWidth}" Background="Transparent" TextWrapping="Wrap"
+                                 AllowDrop="False" KeyboardNavigation.TabIndex="1"
+                                 KeyDown="OnKeyDownHandlerReg"/>
+                        <PasswordBox Grid.Row="2" Style="{StaticResource placeHolderPwd}" x:Name="passwordReg" Tag="Password" 
+                                     FontSize="{StaticResource signinPlaceholderFont}" Height="{StaticResource signinPlaceholderHeight}"
+                                     Width="{StaticResource signinPlaceholderWidth}" AllowDrop="False" KeyboardNavigation.TabIndex="2"
+                                     KeyDown="OnKeyDownHandlerReg"/>
+                        <PasswordBox Grid.Row="3" Style="{StaticResource placeHolderPwd}" x:Name="reinserisciPasswordReg" Tag="Retype password"
+                                     FontSize="{StaticResource signinPlaceholderFont}" Height="{StaticResource signinPlaceholderHeight}"
+                                     Width="{StaticResource signinPlaceholderWidth}" AllowDrop="False" KeyboardNavigation.TabIndex="3"
+                                     KeyDown="OnKeyDownHandlerReg"/>
+                        <Grid Grid.Row="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="1" Style="{StaticResource buttonSwitch}" x:Name="switchToLog"
+                                    Content="Have you already an account?" Width="195" Click="_switchTab" KeyboardNavigation.IsTabStop="False"/>
+                            <Button Grid.Column="2" Style="{StaticResource buttonSendForm}" x:Name="Registra"
+                                    Content="Register now" Width="{StaticResource signinConfirmWidth}" 
+                                    Click="_registra" KeyboardNavigation.IsTabStop="False"/>
+                        </Grid>
+                        <Label Grid.Row="5" Style="{StaticResource error}" x:Name="errorMessageReg" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
+</Window>
