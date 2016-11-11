@@ -44,6 +44,21 @@ namespace PDSserver
             else
                 clientConn = new HandlePacketsUnsecure(socketClient, dizionario.getDelegate());
             clientConn.startListen();
+
+            //Eseguo il logout dell'utente
+            if (clientUser != null)
+            {
+                clientUser.isLogged = false;
+                try
+                {
+
+                    userService.updateUser(clientUser);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Database down, impossibile disconnettere l'utente: " + clientUser.username);
+                }
+            }
         }
         public void stop()
         { 
@@ -59,8 +74,8 @@ namespace PDSserver
         {
             try
             {
-                clientUser.isLogged = false;
-                userService.updateUser(clientUser);
+                //clientUser.isLogged = false;
+                //userService.updateUser(clientUser);
                 clientConn.stopListen();
                 request.message = "Client disconnesso correttamente";
                 return request;
@@ -104,22 +119,27 @@ namespace PDSserver
             if (userService.checkIfCredentialsAreCorrected(user.username, user.password))
             {
                 clientUser = userService.getUser(user.username);
-                clientUser.isLogged = true;
-                try
+                if (clientUser.isLogged)
+                    loginResponse.error = "l'utente risulta gia' loggato";
+                else
                 {
-                    userService.updateUser(clientUser);
-                }
-                catch (Exception e)
-                {
-                    loginResponse.error = "problema di comunicazione col database";
-                    return loginResponse;
-                }  
-                MyConsole.Write("l'utente " + user.username + " si e' loggato");
-                loginResponse.user = clientUser;
-                loginResponse.message = user.username + " autenticazione riuscita";
-                clientDir = serverDirRoot + user.username + @"\";
-                MyConsole.setClientLog(serverDirRoot + @"Log\" + clientUser.username + ".txt");
-                MyConsole.Log(clientUser.username + " logged");
+                    clientUser.isLogged = true;
+                    try
+                    {
+                        userService.updateUser(clientUser);
+                    }
+                    catch (Exception e)
+                    {
+                        loginResponse.error = "problema di comunicazione col database";
+                        return loginResponse;
+                    }
+                    MyConsole.Write("l'utente " + user.username + " si e' loggato");
+                    loginResponse.user = clientUser;
+                    loginResponse.message = user.username + " autenticazione riuscita";
+                    clientDir = serverDirRoot + user.username + @"\";
+                    MyConsole.setClientLog(serverDirRoot + @"Log\" + clientUser.username + ".txt");
+                    MyConsole.Log(clientUser.username + " logged");
+                } 
             }
             else
             {
@@ -147,7 +167,7 @@ namespace PDSserver
             return request;
         }
         public CreateVersion createNewVersion(CreateVersion request)
-        {
+        {   
             try
             {
                 List<int> idVersionList = versionService.getAllIdOfVersions(clientUser.username);

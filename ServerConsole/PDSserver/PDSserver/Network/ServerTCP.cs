@@ -21,7 +21,6 @@ namespace PDSserver
         private int serverPort;
         private readonly object sync = new object();
         private List<HandleClient> hcList = new List<HandleClient>();
-        //private string serverLogPath = @"c:\ServerDir\Log\serverLog.txt";
         private int counter;
 
         private delegate HandleClient MyTaskWorkerDelegate();

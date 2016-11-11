@@ -283,6 +283,8 @@ namespace PDSserver
                 try
                 {
                     bytesRead += netStream.Read(buffer, bytesRead, 1);
+                    if (bytesRead <= 0)
+                        return -1;
                 }
                 catch (IOException e)
                 {
